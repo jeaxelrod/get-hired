@@ -12,6 +12,7 @@ gem 'sdoc', '~> 0.4.0',          group: :doc
 gem 'spring',        group: :development
 gem 'sass'
 gem 'bower-rails'
+gem 'devise'
 
 group :test, :development do
   gem "rspec-rails", '~> 3.0'
