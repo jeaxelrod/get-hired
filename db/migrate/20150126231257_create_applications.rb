@@ -1,7 +1,7 @@
 class CreateApplications < ActiveRecord::Migration
   def change
     create_table :applications do |t|
-      t.integer :job_id
+      t.integer :job_id,   null: false
       t.datetime :date_applied
       t.text :comments
       t.text :communication
@@ -9,5 +9,7 @@ class CreateApplications < ActiveRecord::Migration
 
       t.timestamps null: false
     end
+
+    add_index :applications, :job_id
   end
 end

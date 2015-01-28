@@ -1,7 +1,7 @@
 class CreateJobs < ActiveRecord::Migration
   def change
     create_table :jobs do |t|
-      t.integer :user_id
+      t.integer :user_id,   null: false
       t.integer :queue_id
       t.string :company
       t.string :position
@@ -9,5 +9,8 @@ class CreateJobs < ActiveRecord::Migration
 
       t.timestamps null: false
     end
+
+    add_index :jobs, :user_id
+    add_index :jobs, :queue_id
   end
 end

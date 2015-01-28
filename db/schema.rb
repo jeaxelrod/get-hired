@@ -17,7 +17,7 @@ ActiveRecord::Schema.define(version: 20150126231711) do
   enable_extension "plpgsql"
 
   create_table "applications", force: true do |t|
-    t.integer  "job_id"
+    t.integer  "job_id",        null: false
     t.datetime "date_applied"
     t.text     "comments"
     t.text     "communication"
@@ -26,8 +26,10 @@ ActiveRecord::Schema.define(version: 20150126231711) do
     t.datetime "updated_at",    null: false
   end
 
+  add_index "applications", ["job_id"], name: "index_applications_on_job_id", using: :btree
+
   create_table "jobs", force: true do |t|
-    t.integer  "user_id"
+    t.integer  "user_id",    null: false
     t.integer  "queue_id"
     t.string   "company"
     t.string   "position"
@@ -36,12 +38,17 @@ ActiveRecord::Schema.define(version: 20150126231711) do
     t.datetime "updated_at", null: false
   end
 
+  add_index "jobs", ["queue_id"], name: "index_jobs_on_queue_id", using: :btree
+  add_index "jobs", ["user_id"], name: "index_jobs_on_user_id", using: :btree
+
   create_table "queues", force: true do |t|
-    t.integer  "user_id"
+    t.integer  "user_id",     null: false
     t.datetime "date_active"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
   end
+
+  add_index "queues", ["user_id"], name: "index_queues_on_user_id", using: :btree
 
   create_table "users", force: true do |t|
     t.string   "email",                  default: "", null: false
