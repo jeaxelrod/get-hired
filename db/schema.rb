@@ -30,7 +30,7 @@ ActiveRecord::Schema.define(version: 20150128180117) do
 
   create_table "jobs", force: true do |t|
     t.integer  "user_id",    null: false
-    t.integer  "queue_id"
+    t.integer  "pending_id"
     t.string   "company"
     t.string   "position"
     t.string   "link"
@@ -38,7 +38,7 @@ ActiveRecord::Schema.define(version: 20150128180117) do
     t.datetime "updated_at", null: false
   end
 
-  add_index "jobs", ["queue_id"], name: "index_jobs_on_queue_id", using: :btree
+  add_index "jobs", ["pending_id"], name: "index_jobs_on_pending_id", using: :btree
   add_index "jobs", ["user_id"], name: "index_jobs_on_user_id", using: :btree
 
   create_table "pendings", force: true do |t|
