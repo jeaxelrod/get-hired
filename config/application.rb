@@ -24,5 +24,9 @@ module Gethired
 
     config.assets.precompile << %r(.*.(?:eot|svg|ttf|woff)$)
     config.assets.precompile += %w(bootstrap/glyphicons-halflings-regular.woff2)
+
+    config.to_prepare do
+      DeviseController.respond_to :html, :json
+    end
   end
 end

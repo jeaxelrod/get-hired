@@ -12,6 +12,7 @@ gem 'sdoc', '~> 0.4.0',          group: :doc
 gem 'spring',        group: :development
 gem 'sass'
 gem 'bower-rails'
+gem 'angular-rails-templates'
 gem 'devise'
 
 group :test, :development do
