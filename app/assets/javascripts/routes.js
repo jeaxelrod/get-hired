@@ -3,19 +3,37 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
   $stateProvider
     .state('home', {
       url: '/',
-      templateUrl: "home/index.html",
-      controller: "HomeController",
       views: {
+        "": {
+          templateUrl: "home/index.html",
+          controller: "HomeController"
+        },
         "nav": {
           templateUrl: "nav/navbar.html"
         }
       }
     })
     .state('login', {
-      url: '/login'
+      url: '/login',
+      views: {
+        "": {
+          templateUrl: "registration/login.html",
+          controller: "LoginController"
+        },
+        "nav": {
+          templateUrl: "nav/navbar.html"
+        }
+      }
     })
     .state('sign-up', {
-      url: '/sign-up'
+      url: '/sign-up',
+      views: {
+        "": {
+        },
+        "nav": {
+          templateUrl: "nav/navbar.html"
+        }
+      }
     });
   $urlRouterProvider.otherwise('/');
 }]);
