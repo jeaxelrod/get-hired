@@ -7,14 +7,10 @@ app.controller('LoginController', ['$scope', '$http',
       $http.post('/users/sign_in.json', {user: {email: user.email, password: user.password}}).
         success(function(data, status, headers, config) {
           //Handle successful login
-          console.log("Data: ", data);
-          console.log("Status: ", status);
-          console.log("Headers: ", headers);
-          console.log("Config: ", config);
         }).
         error(function(data, status, headers, config) {
-          //Handle unsuccssful logins
-          console.log(data, status, headers, config);
+          $scope.successMessage = "";
+          $scope.failureMessage = data.error;
         });
     };
     $scope.signOut = function() {
@@ -25,6 +21,8 @@ app.controller('LoginController', ['$scope', '$http',
           console.log("Status: ", status);
           console.log("Headers: ", headers);
           console.log("Config: ", config);
+          $scope.successMessage = "Logged out successully"
+          $scope.failureMessage = "";
         }).
         error(function(data, status, headers, config) {
           //Handle unsuccssful logins
