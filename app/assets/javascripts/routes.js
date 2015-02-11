@@ -3,18 +3,52 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
   $stateProvider
     .state('home', {
       url: '/',
-      templateUrl: "home/index.html",
-      controller: "HomeController"
+      views: {
+        "": {
+          templateUrl: "home/index.html",
+          controller: "HomeController"
+        },
+        "nav": {
+          templateUrl: "nav/navbar.html",
+          controller: "NavController"
+        }
+      }
     })
     .state('login', {
       url: '/login',
-      templateUrl: "registration/login.html",
-      controller: "LoginController"
+      views: {
+        "": {
+          templateUrl: "registration/login.html",
+          controller: "LoginController"
+        },
+        "nav": {
+          templateUrl: "nav/navbar.html",
+          controller: "NavController"
+        }
+      }
     })
     .state('sign-up', {
       url: '/sign-up',
-      templateUrl: "registration/sign-up.html",
-      controller: "SignUpController"
+      views: {
+        "": {
+        },
+        "nav": {
+          templateUrl: "nav/navbar.html",
+          controller: "NavController"
+        }
+      }
+    })
+    .state('logout', {
+      url: '/logout',
+      views: {
+        "": {
+          controller: "LogoutController"
+        },
+        "nav": {
+          templateUrl: "nav/navbar.html",
+          controller: "NavController"
+        }
+      }
     });
   $urlRouterProvider.otherwise('/');
 }]);

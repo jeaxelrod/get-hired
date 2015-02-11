@@ -7,7 +7,6 @@ app.controller('LoginController', ['$scope', '$http', 'AuthService', '$location'
       $http.post('/users/sign_in.json', {user: {email: user.email, password: user.password}}).
         success(function(data, status, headers, config) {
           //Handle successful login
-          console.log("Data: ", data);
           AuthService.setCurrentUser(data);
           $location.path("");
         }).
