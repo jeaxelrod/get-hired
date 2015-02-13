@@ -4,7 +4,6 @@ RSpec.feature "Authentications", :type => :feature, js: true do
   include Warden::Test::Helpers
   Warden.test_mode!
 
-
   scenario "User logs in successfully" do
     FactoryGirl.create(:user) 
 

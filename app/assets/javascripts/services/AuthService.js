@@ -1,9 +1,23 @@
+"use strict";
+
 var app = angular.module("getHired");
-app.factory('AuthService', function () {
+app.factory('AuthService', ['$http', function ($http) {
   var currentUser;
   return {
     setCurrentUser: function(user) { 
       currentUser = user;
+    },
+    getCurrentUser: function() {
+      $http.get('/current_user').
+        success(function(data, status, headers, config) {
+          console.log(data);
+          if (data) {
+            currentUser = data;
+          }
+        }).
+        error(function(data, status, headers, config) {
+          //Handle error for http request of current_user
+        });
     },
     isLoggedIn: function() {
       if (currentUser) {
@@ -14,4 +28,4 @@ app.factory('AuthService', function () {
     },
     currentUser: function() { return currentUser; }
   };
-});
+}]);

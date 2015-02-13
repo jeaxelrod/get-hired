@@ -9,4 +9,9 @@ class SessionsController < Devise::SessionsController
                       :info => "Logged out",
            }
   end
+
+  def get_current_user
+    render :status => 200,
+           :json   => current_user
+  end
 end

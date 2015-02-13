@@ -1,12 +1,14 @@
 "use strict";
 
 describe("Angular authentication service, AuthService,", function() {
-  var AuthService;
+  var AuthService, $httpBackend, user;
 
   beforeEach(module("getHired"));
 
-  beforeEach(inject(function(_AuthService_) {
+  beforeEach(inject(function(_AuthService_, _$httpBackend_) {
     AuthService = _AuthService_;
+    $httpBackend = _$httpBackend_;
+    user = {"email": "john@gmail.com", "password": "password"}
   }));
 
 
@@ -15,7 +17,6 @@ describe("Angular authentication service, AuthService,", function() {
   });
 
   it("should correctly set currentUser", function() {
-    var user = {"email": "john@gmail.com", "password": "password"}
     AuthService.setCurrentUser(user);
     expect(AuthService.currentUser()).toBe(user);
   });
@@ -24,10 +25,15 @@ describe("Angular authentication service, AuthService,", function() {
     expect(AuthService.isLoggedIn()).toBe(false);
   });
   it("should correctly state when a user is logged in", function() {
-    var user = {"email": "john@gmail.com", "password": "password"}
     AuthService.setCurrentUser(user);
     expect(AuthService.isLoggedIn()).toBe(true);
   });
 
-  it("should retreive the currentUser from API");
+  it("should retreive the currentUser from API", function() {
+    $httpBackend.expectGET("/current_user").
+      respond(user);
+    AuthService.getCurrentUser();
+    $httpBackend.flush();
+    expect(AuthService.currentUser()).toEqual(user);
+  });
 });
