@@ -9,7 +9,7 @@ app.factory('AuthService', ['$http', function ($http) {
       currentUser = user;
     },
     getCurrentUser: function() {
-      var promise = $http.get('/current_user', { cache: true})
+      var promise = $http.get('/current_user')
       promise.success(function(data, status, headers, config) {
         if (data) {
           currentUser = data;
