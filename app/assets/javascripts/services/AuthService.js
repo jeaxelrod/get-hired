@@ -1,6 +1,7 @@
 "use strict";
 
 var app = angular.module("getHired");
+
 app.factory('AuthService', ['$http', function ($http) {
   var currentUser;
   return {
