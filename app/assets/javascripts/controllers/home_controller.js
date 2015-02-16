@@ -1,4 +1,6 @@
 var app = angular.module('getHired');
 
-app.controller('HomeController', function($scope) {
-});
+app.controller('HomeController', ['$scope', 'FlashService', 
+  function($scope, FlashService) {
+  }
+]);

@@ -1,6 +1,14 @@
 <div ng-app="getHired">
   <div class="view-container">
     <div ui-view="nav"></div>
+    <div class="alerts">
+      <div ng-repeat="message in messages" 
+           ng-class="message.className"
+           role="alert">
+        {{message.message}}
+      </div>
+    </div>
+    </div>
     <div ui-view class="view-frame animate-view"></div>
   </div>
 </div>

@@ -5,7 +5,11 @@ var app = angular.module("getHired");
 app.factory('FlashService', ['$rootScope', 
   function($rootScope) {
     var currentMessage = [];
-    $rootScope.$on("$routeChangeSuccess", function() {
+    var className = function(type) {
+        return "alert " + "alert-" + type;
+    }
+    $rootScope.$on("$stateChangeSuccess", function() {
+      $rootScope.messages = currentMessage;
       currentMessage = [];
     });
     return {
@@ -13,10 +17,8 @@ app.factory('FlashService', ['$rootScope',
         return currentMessage;
       },
       addMessage: function(message) {
+        message.className = className(message.type);
         currentMessage.push(message);
-      },
-      className: function(type) {
-        return "alert " + "alert-" + type;
       }
     };
   }
