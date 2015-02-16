@@ -14,6 +14,9 @@ app.factory('FlashService', ['$rootScope',
       },
       addMessage: function(message) {
         currentMessage.push(message);
+      },
+      className: function(type) {
+        return "alert " + "alert-" + type;
       }
     };
   }

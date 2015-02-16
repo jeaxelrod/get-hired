@@ -35,9 +35,9 @@ describe("FlashService", function() {
     $rootScope.$broadcast("$routeChangeSuccess");
     expect(FlashService.currentMessage()).toEqual([]);
   });
-  it("should correctly specify the class name of success messages");
-  it("should correctly specify the class name of info messages");
-  it("should correctly specify the class name of warning messages");
-  it("should correctly specify the class name of danger messages");
+
+  it("should correctly specify the class name of success messages", function() {
+    expect(FlashService.className("success")).toBe("alert alert-success");
+  });
 });
 
