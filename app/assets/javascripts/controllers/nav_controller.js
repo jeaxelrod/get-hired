@@ -23,14 +23,21 @@ app.controller('NavController', ['$scope', 'AuthService', function($scope, AuthS
     }
   };
   if (!AuthService.isLoggedIn()) {
-    AuthService.getCurrentUser();
-  }
-  $scope.isLoggedIn = AuthService.isLoggedIn();
-  $scope.setLinks($scope.isLoggedIn);
-  $scope.user = AuthService.currentUser;
-  $scope.$watch( AuthService.isLoggedIn, function( isLoggedIn ) {
-    $scope.isLoggedIn = isLoggedIn;
+    AuthService.getCurrentUser().then( function() {
+      $scope.isLoggedIn = AuthService.isLoggedIn();
+      $scope.setLinks($scope.isLoggedIn);
+      $scope.user = AuthService.currentUser;
+    });
+  } else {
+    $scope.isLoggedIn = AuthService.isLoggedIn();
     $scope.setLinks($scope.isLoggedIn);
-    $scope.user = AuthService.currentUser();
+    $scope.user = AuthService.currentUser;
+  }
+  $scope.$watch( AuthService.isLoggedIn, function(newValue, oldValue) {
+    if (typeof newValue !== 'undefined' && newValue !== oldValue) {
+      $scope.isLoggedIn = newValue;
+      $scope.setLinks($scope.isLoggedIn);
+      $scope.user = AuthService.currentUser();
+    }
   });
 }]);

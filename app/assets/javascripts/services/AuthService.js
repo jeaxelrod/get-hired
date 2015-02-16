@@ -8,16 +8,13 @@ app.factory('AuthService', ['$http', function ($http) {
       currentUser = user;
     },
     getCurrentUser: function() {
-      $http.get('/current_user').
-        success(function(data, status, headers, config) {
-          console.log(data);
-          if (data) {
-            currentUser = data;
-          }
-        }).
-        error(function(data, status, headers, config) {
-          //Handle error for http request of current_user
-        });
+      var promise = $http.get('/current_user', { cache: true})
+      promise.success(function(data, status, headers, config) {
+        if (data) {
+          currentUser = data;
+        }
+      })
+      return promise;
     },
     isLoggedIn: function() {
       if (currentUser) {
