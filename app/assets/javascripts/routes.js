@@ -31,6 +31,8 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
       url: '/sign-up',
       views: {
         "": {
+          templateUrl: "registration/signup.html",
+          controller: "SignupController"
         },
         "nav": {
           templateUrl: "nav/navbar.html",
