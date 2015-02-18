@@ -12,8 +12,7 @@ describe "Jobs API" do
 
     expect(response).to be_success
     json = JSON.parse(response.body)
-    expect(json).to eq([{ position: job1.position, company: job1.company, link: job1.link },
-                        { position: job2.position, company: job2.comapny, link: job2.link }])
+    expect(json).to eq([JSON.parse(job2.to_json), JSON.parse(job1.to_json)])
   end
   it "should return no jobs if user isn't logged in" do
     user = FactoryGirl.create(:user)
@@ -23,5 +22,7 @@ describe "Jobs API" do
     get "/user/jobs"
 
     expect(response).to_not be_success
+    json = JSON.parse(response.body)
+    expect(json).to eq({"error" => "You need to sign in or sign up before continuing."})
   end
 end

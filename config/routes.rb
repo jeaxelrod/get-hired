@@ -1,8 +1,14 @@
 Rails.application.routes.draw do
   devise_for :users, :controllers => { :sessions => "sessions" }
+
   devise_scope :user do
     get 'current_user' => 'sessions#get_current_user'
   end
+
+  scope "/user" do
+    resources :jobs, defaults: { format: 'json' }
+  end
+
   root 'home#index'
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
