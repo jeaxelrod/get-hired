@@ -1,3 +1,5 @@
+"use strict";
+
 var app = angular.module('getHired');
 app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider) {
   $stateProvider
@@ -45,6 +47,19 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
       views: {
         "": {
           controller: "LogoutController"
+        },
+        "nav": {
+          templateUrl: "nav/navbar.html",
+          controller: "NavController"
+        }
+      }
+    })
+    .state('jobs', {
+      url: '/jobs',
+      views: {
+        "": {
+          templateUrl: "jobs/index.html",
+          controller: "JobsIndexController"
         },
         "nav": {
           templateUrl: "nav/navbar.html",
