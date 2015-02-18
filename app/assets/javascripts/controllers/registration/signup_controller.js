@@ -4,9 +4,12 @@ var app = angular.module("getHired");
 
 app.controller("SignupController", ["$scope", "$http", "$location", "FlashService", "AuthService",
   function($scope, $http, $location, FlashService, AuthService) {
-    $scope.user = {email: null, password: null, password_confirmation: null};
+    $scope.user = {email: "", password: "", password_confirmation: ""};
     $scope.signup = function(user) {
-      console.log("signup");
+      console.log("User: ", user);
+      user.password_confirmation = user.password_confirmation ? 
+                                     user.password_confirmation : 
+                                     "";
       $http.post('/users.json', {user: { email: user.email,
                                          password: user.password, 
                                          password_confirmation: user.password_confirmation }}).

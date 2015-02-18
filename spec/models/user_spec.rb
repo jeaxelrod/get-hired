@@ -22,7 +22,10 @@ RSpec.describe User, :type => :model do
     user = FactoryGirl.create(:user)
     user.email = "h@com"
     expect(user).to_not be_valid
+  end
 
+  it "is invalid to create new user without password confirmation" do
+    expect { FactoryGirl.create(:user, password_confirmation: "") }.to raise_error
   end
 
   it "only accepts valid emails" do
