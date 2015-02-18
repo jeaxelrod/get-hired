@@ -5,9 +5,9 @@ describe("LoginController", function() {
 
   beforeEach(module('getHired'));
 
-  beforeEach(inject(function($injector, $rootScope, $controller, _AuthService_) {
+  beforeEach(inject(function($rootScope, $controller, _$httpBackend_, _AuthService_) {
     user = {id: 1, email: "john@gmail.com", password: "password"};
-    $httpBackend = $injector.get('$httpBackend');
+    $httpBackend = _$httpBackend_; 
     scope = $rootScope.$new();
     controller = $controller('LoginController', {$scope: scope});
     AuthService = _AuthService_;
