@@ -6,7 +6,6 @@ app.controller("JobsIndexController", ["$scope", "$http",
   function($scope, $http) {
     $http.get('/user/jobs').
       success(function(data, status, headers, config) {
-        console.log("hi");
         $scope.jobs = data.map(function(job) {
           return {
             position: job.position,
