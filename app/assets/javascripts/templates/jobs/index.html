@@ -13,11 +13,14 @@
       </thead>
       <tbody>
         <tr ng-repeat="job in newJob"> 
-          <form novalidate>
+          <form name="Job{{job.id}}" novalidate>
             <th><a ng-click="subtractNewJob(job.id)" href><span class="glyphicon glyphicon-remove"></span></a></th>
             <td><input ng-model="job.position" class="form-control" placeholder="Position"></td>
             <td><input ng-model="job.company"  class="form-control" placeholder="Company"></td>
-            <td><input ng-model="job.link"     class="form-control" placeholder="Link"></td>
+            <td>
+              <div class="alert alert-warning" ng-show="job.linkError">Url is Invalid <small>(Please include http:// or https://)</small></div>
+              <input ng-model="job.link" class="form-control" placeholder="Link" type="url">
+            </td>
             <td><button ng-click="createJob(job)" type=submit" class="btn">Create Job</button></td>
           </form>
         </tr>

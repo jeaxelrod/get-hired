@@ -77,4 +77,19 @@ describe("JobsIndexController", function() {
     expect(scope.newJob.length).toBe(0);
     expect(scope.jobs).toContain(newJob.job);
   });
+
+  it("creating new job from form should create a link error if link is invalid", function() {
+    $httpBackend.flush();
+    scope.addNewJob();
+    var newJob = scope.newJob[0];
+    newJob.job = { position: "Internship", company: "Facebook", link: "facebook.com" };
+
+    $httpBackend.expectPOST("/user/jobs", {job: newJob}).
+      respond(422, {errors: {link: ["invalid url"]}});
+    scope.createJob(newJob);
+    $httpBackend.flush();
+
+    expect(newJob.linkError).toBe(true);
+    expect(scope.jobs).not.toContain(newJob.job);
+  });
 });

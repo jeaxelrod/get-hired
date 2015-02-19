@@ -49,6 +49,9 @@ app.controller("JobsIndexController", ["$scope", "$http",
         }).
         error(function(data, status, headers, config) {
           console.log(data);
+          if (data.errors.link) {
+            job.linkError = true;
+          }
         });
     }
   }
