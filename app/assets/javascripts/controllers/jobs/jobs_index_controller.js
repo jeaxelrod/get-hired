@@ -4,10 +4,24 @@ var app = angular.module("getHired");
 
 app.controller("JobsIndexController", ["$scope", "$http",
   function($scope, $http) {
-    $scope.job = {};
-    $scope.newJobCount = 0;
-    $scope.subtractJobCount = function() {
-      $scope.newJobCount = $scope.newJobCount - 1;
+    var jobCount = 0;
+    $scope.newJob = [];
+    $scope.subtractNewJob = function(id) {
+      var newJobIndex = -1;
+      for (var i=0; i<$scope.newJob.length; i++) {
+        var currentJob = $scope.newJob[i];
+        if (currentJob.id === id) {
+          var newJobIndex = i;
+          break;
+        }
+      }
+      if (newJobIndex !== -1) {
+        $scope.newJob.splice(newJobIndex, 1);
+      }
+    };
+    $scope.addNewJob = function()  {
+      jobCount++;
+      $scope.newJob.push({id: jobCount, job: {}});
     };
     $scope.getNumber = function(num) {
       return new Array(num);
@@ -28,7 +42,7 @@ app.controller("JobsIndexController", ["$scope", "$http",
       $http.post('/user/jobs', {job: job}).
         success(function(data, status, headers, config) {
           console.log(data);
-          $scope.job = {};
+          $scope.subtractNewJob(job.id);
           $scope.jobs.unshift({ position: data.position,
                              company:  data.company,
                              link:     data.link });
