@@ -56,4 +56,17 @@ describe "Jobs API" do
     json = JSON.parse(response.body)
     expect(json).to eq({"error" => "You need to sign in or sign up before continuing."})
   end
+
+  it "should invalidate improper links" do
+    user = FactoryGirl.create(:user)
+    login_as(user, :scope => :user)
+
+    post "/user/jobs", :job => { position: "Internship",
+                                 company:  "Google",
+                                 link:     "google.com" }
+
+    expect(response).to_not be_success
+    json = JSON.parse(response.body)
+    expect(json).to eq({"error" => "Email is invalid"})
+  end
 end

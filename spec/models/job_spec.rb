@@ -31,36 +31,36 @@ RSpec.describe Job, :type => :model do
     end
   end
 
-# describe "link" do
-#   before(:each) do
-#     @job = FactoryGirl.create(:job)
-#   end
-#   context "valid links" do
-#     it "should be valid with HTTP" do
-#       @job.link = "http://m.co"
-#       expect(@job).to be_valid
-#     end
-#     it "should be valid with HTTPS" do
-#       @job.link = "https://www.c.com"
-#       expect(@job.link).to be_valid
-#     end
-#   end
-#   context "invalid links" do
-#     it "should be invalid without protocol" do
-#       @job.link = "m.co"
-#       expect(@job).to_not be_valid
-#     end
+  describe "link" do
+    before(:each) do
+      @job = FactoryGirl.create(:job)
+    end
+    context "valid links" do
+      it "should be valid with HTTP" do
+        @job.link = "http://m.co"
+        expect(@job).to be_valid
+      end
+      it "should be valid with HTTPS" do
+        @job.link = "https://www.c.com"
+        expect(@job).to be_valid
+      end
+    end
+    context "invalid links" do
+      it "should be invalid without protocol" do
+        @job.link = "m.co"
+        expect(@job).to_not be_valid
+      end
 
-#     it "should be invalid without domain name" do
-#       @job.link = "http://"
-#       expect(@job).to_not be_valid
-#     end
-#     
-#     it "should be invalid without proper domain name" do
-#       @job.link = "http://hi"
-#       epect(@job).to_not be_valid
-#     end
-#   end
-# end
+      it "should be invalid without domain name" do
+        @job.link = "http://"
+        expect(@job).to_not be_valid
+      end
+      
+      it "should be invalid without proper domain name" do
+        @job.link = "http://hi"
+        expect(@job).to_not be_valid
+      end
+    end
+  end
 
 end
