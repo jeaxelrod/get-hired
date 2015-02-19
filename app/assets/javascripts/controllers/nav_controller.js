@@ -20,6 +20,7 @@ app.controller('NavController', ['$scope', 'AuthService', '$state',
           }
         ];
       } else {
+        $scope.leftLinks = [];
         $scope.rightLinks = [
           {
             href: "sign-up",
