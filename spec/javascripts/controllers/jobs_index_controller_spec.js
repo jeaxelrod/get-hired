@@ -33,4 +33,48 @@ describe("JobsIndexController", function() {
     scope.$digest();
     expect(scope.jobs).toContain(newJob);
   });
+
+  it("should add new jobs form", function() {
+    $httpBackend.flush();
+    expect(scope.newJob).toEqual([]);
+    scope.addNewJob();
+    scope.addNewJob();
+    expect(scope.newJob.length).toBe(2);
+    expect(scope.newJob).toEqual([{id: 1, job:{}}, {id: 2, job: {}}]);
+  });
+
+  it("should delete the correct new jobs form", function() {
+    $httpBackend.flush();
+    scope.addNewJob();
+    scope.addNewJob();
+    scope.addNewJob();
+    scope.subtractNewJob(2);
+
+    expect(scope.newJob.length).toBe(2);
+    expect(scope.newJob).toEqual([{id: 1, job: {}}, {id: 3, job: {}}]);
+  });
+
+  it("should not delete a new job form if id isn't present", function() {
+    $httpBackend.flush();
+    scope.addNewJob();
+    scope.subtractNewJob(2);
+    
+    expect(scope.newJob.length).toBe(1);
+    expect(scope.newJob).toEqual([{id: 1, job: {}}]);
+  });
+
+  it("creating a new job from form should delete that form after job is create", function() {
+    $httpBackend.flush();
+    scope.addNewJob();
+    var newJob = scope.newJob[0];
+    newJob.job = { position: "Internship", company: "Facebook", link:"http://facebook.com" };
+    expect(scope.newJob.length).toBe(1);
+
+    $httpBackend.expectPOST("/user/jobs", {job: newJob}).
+      respond(newJob.job);
+    scope.createJob(newJob);
+    $httpBackend.flush();
+    expect(scope.newJob.length).toBe(0);
+    expect(scope.jobs).toContain(newJob.job);
+  });
 });
