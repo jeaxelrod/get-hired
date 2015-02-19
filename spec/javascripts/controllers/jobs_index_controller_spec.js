@@ -23,4 +23,14 @@ describe("JobsIndexController", function() {
     ];
     expect(scope.jobs).toEqual(filteredJobs);
   });
+
+  it("should create new jobs", function() {
+    var newJob = { position: "Internship", company: "Facebook", link:"http://facebook.com" };
+    $httpBackend.expectPOST("/user/jobs", {job: newJob}).
+      respond(newJob);
+    scope.createJob(newJob);
+    $httpBackend.flush();
+    scope.$digest();
+    expect(scope.jobs).toContain(newJob);
+  });
 });

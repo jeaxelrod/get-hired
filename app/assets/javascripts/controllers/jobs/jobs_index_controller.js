@@ -16,6 +16,18 @@ app.controller("JobsIndexController", ["$scope", "$http",
       }).
       error(function(data, status, headers, config) {
       });
+    $scope.createJob = function(job) {
+      $http.post('/user/jobs', {job: job}).
+        success(function(data, status, headers, config) {
+          console.log(data);
+          $scope.jobs.push({ position: data.position,
+                             company:  data.company,
+                             link:     data.link });
+        }).
+        error(function(data, status, headers, config) {
+          console.log(data);
+        });
+    }
   }
  ]);
 
