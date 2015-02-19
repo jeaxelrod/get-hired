@@ -55,11 +55,6 @@ RSpec.describe Job, :type => :model do
         @job.link = "http://"
         expect(@job).to_not be_valid
       end
-      
-      it "should be invalid without proper domain name" do
-        @job.link = "http://hi"
-        expect(@job).to_not be_valid
-      end
     end
   end
 

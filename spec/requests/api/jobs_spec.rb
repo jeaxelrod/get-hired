@@ -67,6 +67,6 @@ describe "Jobs API" do
 
     expect(response).to_not be_success
     json = JSON.parse(response.body)
-    expect(json).to eq({"error" => "Email is invalid"})
+    expect(json).to eq({"errors" => {"link" => ["is not a valid url"]}})
   end
 end
