@@ -7,9 +7,19 @@
           <th>Position</th>
           <th>Company</th>
           <th>Link</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
+        <tr>
+          <form novalidate>
+            <th></th>
+            <td><input ng-model="job.position" class="form-control" placeholder="Position"></td>
+            <td><input ng-model="job.company"  class="form-control" placeholder="Company"></td>
+            <td><input ng-model="job.link"     class="form-control" placeholder="Link"></td>
+            <td><button ng-click="createJob(job)" type=submit" class="btn">Create Job</button></td>
+          </form>
+        </tr>
         <tr ng-repeat="job in jobs">
           <th>{{$index + 1}}</th>
           <td>{{job.position}}</td>
