@@ -5,6 +5,13 @@ var app = angular.module("getHired");
 app.controller("JobsIndexController", ["$scope", "$http",
   function($scope, $http) {
     $scope.job = {};
+    $scope.newJobCount = 0;
+    $scope.subtractJobCount = function() {
+      $scope.newJobCount = $scope.newJobCount - 1;
+    };
+    $scope.getNumber = function(num) {
+      return new Array(num);
+    };
     $http.get('/user/jobs').
       success(function(data, status, headers, config) {
         $scope.jobs = data.map(function(job) {
