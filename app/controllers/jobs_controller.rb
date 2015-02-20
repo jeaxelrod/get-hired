@@ -20,7 +20,11 @@ class JobsController < ApplicationController
     if @job.update(jobParams)
       render json: @job
     else 
-      render :status => 400, json: { error: "Update failed" }
+      if @job.errors.full_messages_for(:link)[0]
+        render :status => 400, json: { errors: {link: ["Url is invalid"]}}
+      else
+        render :status => 400, json: { errors:["Update failed"] }
+      end
     end
   end
 end

@@ -87,7 +87,6 @@ describe "Jobs API" do
 
     expect(response).to_not be_success
     json = JSON.parse(response.body)
-    
     updatedJob = user.jobs[0]
     expect(updatedJob.link).to_not eq(newJob[:link])
   end 
