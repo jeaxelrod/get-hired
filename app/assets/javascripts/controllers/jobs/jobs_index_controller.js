@@ -38,6 +38,19 @@ app.controller("JobsIndexController", ["$scope", "$http",
       }).
       error(function(data, status, headers, config) {
       });
+    $scope.jobUrl = function(job) {
+      if (job.edit) {
+        return "jobs/_edit_job.html"
+      } else {
+        return "jobs/_job.html"
+      }
+    };
+    $scope.beginEdit = function(job) {
+      job.edit = true;
+    };
+    $scope.closeEdit = function(job) {
+      job.edit = false;
+    };
     $scope.createJob = function(job) {
       $http.post('/user/jobs', {job: job}).
         success(function(data, status, headers, config) {

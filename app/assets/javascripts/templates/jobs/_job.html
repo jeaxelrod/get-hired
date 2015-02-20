@@ -1,0 +1,6 @@
+<th>{{$index + 1}}</th>
+<td>{{job.position}}</td>
+<td>{{job.company}}</td>
+<td><a target="_blank" href={{job.link}}>{{job.link.split("http://")[1]}}</a></td>
+<td><button ng-click="beginEdit(job)" class="btn">Edit Job</button></td>
+

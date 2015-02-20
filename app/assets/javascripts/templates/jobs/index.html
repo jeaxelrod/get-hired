@@ -24,11 +24,8 @@
             <td><button ng-click="createJob(job)" type=submit" class="btn">Create Job</button></td>
           </form>
         </tr>
-        <tr ng-repeat="job in jobs">
-          <th>{{$index + 1}}</th>
-          <td>{{job.position}}</td>
+        <tr ng-repeat="job in jobs" ng-include="jobUrl(job)">
           <td>{{job.company}}</td>
-          <td><a target="_blank" href={{job.link}}>{{job.link.split("http://")[1]}}</a></td>
         </tr>
       </tbody>
     </table>
