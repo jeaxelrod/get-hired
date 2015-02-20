@@ -34,8 +34,53 @@ describe("JobsIndexController", function() {
     expect(scope.jobs).toContain(newJob);
   });
 
-  it("should edit a job", function() {
+  it("should fail to create new job if invalid link", function() {
+    $httpBackend.flush();
+    scope.addNewJob();
+    var newJob = scope.newJob[0];
+    newJob.job = { position: "Internship", company: "Facebook", link: "facebook.com" };
 
+    $httpBackend.expectPOST("/user/jobs", {job: newJob}).
+      respond(422, {errors: {link: ["invalid url"]}});
+    scope.createJob(newJob);
+    $httpBackend.flush();
+
+    expect(newJob.linkError).toBe(true);
+    expect(scope.jobs).not.toContain(newJob.job);
+  });
+
+  it("should edit a job", function() {
+    var job = { position: "Internship", company: "Facebook", link:"http://facebook.com" };
+    $httpBackend.expectPOST("/user/jobs", {job: job}).
+      respond(job);
+    scope.createJob(job);
+
+    var editJob = { position: "Software Engineer" };
+    var newJob =  { position: editJob.position, company: job.company, link: job.link };
+    $httpBackend.expectPUT("/user/jobs/1", {job: editJob}).
+      respond(newJob);
+    scope.editJob(editJob);
+    $httpBackend.flush();
+    scope.$digest();
+
+    expect(scope.jobs).toContain(newJob);
+  });
+
+  it("should handle failed edits of a job", function() {
+    var job = { position: "Internship", company: "Facebook", link:"http://facebook.com" };
+    $httpBackend.expectPOST("/user/jobs", {job: job}).
+      respond(job);
+    scope.createJob(job);
+
+    var editJob = {link: "fcebk.com" };
+    var failedNewJob =  { position: job.position, company: job.company, link: editJob.link };
+    $httpBackend.expectPUT("/user/jobs/1", {job: editJob}).
+      respond(400, {errors: {link: ["Invalid url"]}});
+    scope.editJob(editJob);
+    $httpBackend.flush();
+    scope.$digest();
+    
+    expect(scope.jobs).not.toContain(failedNewJob);
   });
 
   it("should add new jobs form", function() {
@@ -82,18 +127,4 @@ describe("JobsIndexController", function() {
     expect(scope.jobs).toContain(newJob.job);
   });
 
-  it("creating new job from form should create a link error if link is invalid", function() {
-    $httpBackend.flush();
-    scope.addNewJob();
-    var newJob = scope.newJob[0];
-    newJob.job = { position: "Internship", company: "Facebook", link: "facebook.com" };
-
-    $httpBackend.expectPOST("/user/jobs", {job: newJob}).
-      respond(422, {errors: {link: ["invalid url"]}});
-    scope.createJob(newJob);
-    $httpBackend.flush();
-
-    expect(newJob.linkError).toBe(true);
-    expect(scope.jobs).not.toContain(newJob.job);
-  });
 });
