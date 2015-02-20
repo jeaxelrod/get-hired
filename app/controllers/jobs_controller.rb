@@ -13,4 +13,14 @@ class JobsController < ApplicationController
                                           company:  job["company"], 
                                           link:     job["link"]) 
   end
+
+  def update
+    @job = Job.find(params[:id])
+    jobParams = params[:job].permit!
+    if @job.update(jobParams)
+      render json: @job
+    else 
+      render :status => 400, json: { error: "Update failed" }
+    end
+  end
 end

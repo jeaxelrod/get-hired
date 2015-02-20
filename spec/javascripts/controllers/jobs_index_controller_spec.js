@@ -34,6 +34,10 @@ describe("JobsIndexController", function() {
     expect(scope.jobs).toContain(newJob);
   });
 
+  it("should edit a job", function() {
+
+  });
+
   it("should add new jobs form", function() {
     $httpBackend.flush();
     expect(scope.newJob).toEqual([]);

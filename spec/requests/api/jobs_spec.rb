@@ -56,6 +56,51 @@ describe "Jobs API" do
     json = JSON.parse(response.body)
     expect(json).to eq({"error" => "You need to sign in or sign up before continuing."})
   end
+  
+  it "should edit jobs" do
+    user = FactoryGirl.create(:user)
+    job = FactoryGirl.create(:job, user: user)
+    newJob = { position: "Engineer", company: "Instagram" }
+
+    login_as(user, :scope => :user)
+    put "/user/jobs/#{job.id}", :job => newJob
+
+    expect(response).to be_success
+    json = JSON.parse(response.body)
+    expect(json["position"]).to eq(newJob[:position])
+    expect(json["company"]).to  eq(newJob[:company])
+    expect(json["link"]).to     eq(job.link)
+
+    updatedJob = user.jobs[0]
+    expect(updatedJob["position"]).to eq(newJob[:position])
+    expect(updatedJob["company"]).to  eq(newJob[:company])
+    expect(updatedJob["link"]).to      eq(job.link)
+  end
+
+  it "should respond to bad job edits" do
+    user = FactoryGirl.create(:user)
+    job = FactoryGirl.create(:job, user: user)
+    newJob = { link: "facebook.com" }
+
+    login_as(user, :scope => :user)
+    put "/user/jobs/#{job.id}", :job => newJob
+
+    expect(response).to_not be_success
+    json = JSON.parse(response.body)
+    
+    updatedJob = user.jobs[0]
+    expect(updatedJob.link).to_not eq(newJob[:link])
+  end 
+
+  it "should not let user edit jobs if not logged in" do
+    newJob = { position: "Engineer", company: "Instagram", link:"http://instagram" }
+
+    put "/user/jobs/1", :job => newJob
+
+    expect(response).to_not be_success
+    json = JSON.parse(response.body)
+    expect(json).to eq({"error" => "You need to sign in or sign up before continuing."})
+  end
 
   it "should invalidate improper links" do
     user = FactoryGirl.create(:user)
