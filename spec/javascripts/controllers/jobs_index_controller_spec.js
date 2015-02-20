@@ -50,37 +50,49 @@ describe("JobsIndexController", function() {
   });
 
   it("should edit a job", function() {
-    var job = { position: "Internship", company: "Facebook", link:"http://facebook.com" };
+    var job = { id:       1, 
+                position: "Internship",
+                company:  "Facebook",
+                link:     "http://facebook.com" };
     $httpBackend.expectPOST("/user/jobs", {job: job}).
       respond(job);
     scope.createJob(job);
 
-    var editJob = { position: "Software Engineer" };
-    var newJob =  { position: editJob.position, company: job.company, link: job.link };
+    var editJob = { id:       job.id,  
+                    position: "Software Engineer", 
+                    company:  job.company, 
+                    link:     job.link };
     $httpBackend.expectPUT("/user/jobs/1", {job: editJob}).
-      respond(newJob);
+      respond(editJob);
     scope.editJob(editJob);
     $httpBackend.flush();
     scope.$digest();
 
-    expect(scope.jobs).toContain(newJob);
+    expect(scope.jobs).toContain(editJob);
   });
 
   it("should handle failed edits of a job", function() {
-    var job = { position: "Internship", company: "Facebook", link:"http://facebook.com" };
+    var job = { id:       1, 
+                position: "Internship",
+                company:  "Facebook", 
+                link:     "http://facebook.com" };
     $httpBackend.expectPOST("/user/jobs", {job: job}).
       respond(job);
     scope.createJob(job);
 
-    var editJob = {link: "fcebk.com" };
-    var failedNewJob =  { position: job.position, company: job.company, link: editJob.link };
+    var editJob = { id:       job.id,
+                    position: job.position,
+                    company:  job.company,
+                    link:     "fcebk.com" };
     $httpBackend.expectPUT("/user/jobs/1", {job: editJob}).
       respond(400, {errors: {link: ["Invalid url"]}});
     scope.editJob(editJob);
     $httpBackend.flush();
     scope.$digest();
-    
-    expect(scope.jobs).not.toContain(failedNewJob);
+   
+    job.linkError = true;
+    expect(scope.jobs).not.toContain(editJob);
+    expect(scope.jobs).toContain(job);
   });
 
   it("should add new jobs form", function() {
