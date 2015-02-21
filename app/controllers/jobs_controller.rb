@@ -27,4 +27,12 @@ class JobsController < ApplicationController
       end
     end
   end
+
+  def destroy
+    begin
+      respond_with current_user.jobs.find(params[:id]).destroy
+    rescue ActiveRecord::RecordNotFound => e
+      render :status => 400, json: { errors: e }
+    end
+  end
 end

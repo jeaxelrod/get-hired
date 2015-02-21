@@ -113,4 +113,40 @@ describe "Jobs API" do
     json = JSON.parse(response.body)
     expect(json).to eq({"errors" => {"link" => ["is not a valid url"]}})
   end
+
+  it "should delete jobs" do
+    user = FactoryGirl.create(:user)
+    job =  FactoryGirl.create(:job, user: user)
+    login_as(user, :scope => :user)
+
+    expect(Job.where(id: job.id)).to_not be_empty 
+
+    delete "/user/jobs/#{job.id}"
+
+    expect(response).to be_success
+    expect(Job.where(id: job.id)).to be_empty 
+  end
+
+  it "should fail to delete another user's job" do
+    user1 = FactoryGirl.create(:user)
+    user2 = FactoryGirl.create(:user)
+    job = FactoryGirl.create(:job, user: user2)
+    login_as(user1, :scope => :user)
+
+    delete "/user/jobs/#{job.id}"
+
+    expect(response).to_not be_success
+    expect(user2.jobs.length).to eq(1)
+  end
+
+  it "should not let a non logged in user delete a job" do
+    user = FactoryGirl.create(:user)
+    job = FactoryGirl.create(:job, user: user)
+
+    delete "/user/jobs/#{job.id}"
+
+    expect(response).to_not be_succes
+    json = JSON.parse(response.body)
+    expect(json).to eq({"error" => "You need to sign in or sign up before continuing."})
+  end
 end
