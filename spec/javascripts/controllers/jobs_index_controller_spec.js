@@ -18,8 +18,8 @@ describe("JobsIndexController", function() {
   it("should lists all jobs", function() {
     $httpBackend.flush();
     var filteredJobs = [
-      { position: jobs[0].position, company: jobs[0].company, link: jobs[0].link },
-      { position: jobs[1].position, company: jobs[1].company, link: jobs[1].link }
+      { id: 1, position: jobs[0].position, company: jobs[0].company, link: jobs[0].link },
+      { id: 2, position: jobs[1].position, company: jobs[1].company, link: jobs[1].link }
     ];
     expect(scope.jobs).toEqual(filteredJobs);
   });
@@ -50,13 +50,7 @@ describe("JobsIndexController", function() {
   });
 
   it("should edit a job", function() {
-    var job = { id:       1, 
-                position: "Internship",
-                company:  "Facebook",
-                link:     "http://facebook.com" };
-    $httpBackend.expectPOST("/user/jobs", {job: job}).
-      respond(job);
-    scope.createJob(job);
+    var job = jobs[0]; 
 
     var editJob = { id:       job.id,  
                     position: "Software Engineer", 
@@ -72,13 +66,7 @@ describe("JobsIndexController", function() {
   });
 
   it("should handle failed edits of a job", function() {
-    var job = { id:       1, 
-                position: "Internship",
-                company:  "Facebook", 
-                link:     "http://facebook.com" };
-    $httpBackend.expectPOST("/user/jobs", {job: job}).
-      respond(job);
-    scope.createJob(job);
+    var job = jobs[0]; 
 
     var editJob = { id:       job.id,
                     position: job.position,

@@ -92,10 +92,11 @@ RSpec.feature "Jobs", :type => :feature, js: true do
     click_link "Jobs"
 
     click_button "Edit Job"
-    expect(page).to have_field("Company")
+    fill_in "Company", with: "meow"
 
     page.find(".glyphicon-remove").click
     expect(page).to_not have_field("Company")
+    expect(page).to_not have_content("meow")
   end
 
   scenario "Failing to edit a job" do

@@ -40,17 +40,22 @@ app.controller("JobsIndexController", ["$scope", "$http",
       error(function(data, status, headers, config) {
       });
     $scope.jobUrl = function(job) {
-      if (job.edit) {
+      if (job.editJob) {
         return "jobs/_edit_job.html"
       } else {
         return "jobs/_job.html"
       }
     };
     $scope.beginEdit = function(job) {
-      job.edit = true;
+      job.editJob = {id:       job.id,
+                     position: job.position,
+                     company:  job.company,
+                     link:     job.link};
+      console.log("Begin edit job: ", job);
     };
     $scope.closeEdit = function(job) {
-      job.edit = false;
+      job.editJob = undefined;
+      job.linkError = undefined;
     };
     $scope.createJob = function(job) {
       $http.post('/user/jobs', {job: job}).
@@ -82,7 +87,7 @@ app.controller("JobsIndexController", ["$scope", "$http",
               currentJob.position = data.position;
               currentJob.company = data.company;
               currentJob.link = data.link;
-              currentJob.edit = false;
+              currentJob.editJob = undefined;
               break;
             }
           }
