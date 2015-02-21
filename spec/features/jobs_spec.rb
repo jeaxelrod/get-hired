@@ -23,6 +23,7 @@ RSpec.feature "Jobs", :type => :feature, js: true do
 
     visit root_path
     click_link "Jobs"
+
     click_button "New Job"
     fill_in "Position", with: "Internship"
     fill_in "Company", with: "Facebook"
@@ -33,6 +34,35 @@ RSpec.feature "Jobs", :type => :feature, js: true do
     expect(page).to have_content "Internship"
     expect(page).to have_content "Facebook"
     expect(page).to have_link "facebook.com"
+  end
+
+  scenario "Failing to create a new job" do
+    user = FactoryGirl.create(:user)
+    login_as(user, :scope => :user)
+
+    visit root_path
+    click_link "Jobs"
+
+    click_button "New Job"
+    fill_in "Link", with: "facebookcom"
+    click_button "Create Job"
+
+    expect(page).to have_content "Invalid"
+    expect(page).to have_field "Company"
+  end
+
+  scenario "Canceling a request to create a new job"  do
+    user = FactoryGirl.create(:user)
+    login_as(user, :scope => :user)
+
+    visit root_path
+    click_link "Jobs"
+
+    click_button "New Job"
+    expect(page).to have_field "Link"
+
+    page.find(".glyphicon-remove").click
+    expect(page).to_not have_field "Link"
   end
 
   scenario "Editing a job" do
