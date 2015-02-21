@@ -34,5 +34,54 @@ RSpec.feature "Jobs", :type => :feature, js: true do
     expect(page).to have_content "Facebook"
     expect(page).to have_link "facebook.com"
   end
+
+  scenario "Editing a job" do
+    user = FactoryGirl.create(:user)
+    job = FactoryGirl.create(:job, user: user)
+    login_as(user, :scope => :user)
+
+    visit root_path
+    click_link "Jobs"
+    
+    click_button "Edit Job"
+    expect(page).to have_field("Link")
+
+    fill_in "Position", with: "Cat Sitter"
+    click_button "Edit Job"
+
+    expect(page).to_not have_field("Link")
+    expect(page).to have_content("Cat Sitter")
+  end
+
+  scenario "Canceling an edit jobs request" do
+    user = FactoryGirl.create(:user)
+    job = FactoryGirl.create(:job, user: user)
+    login_as(user, :scope => :user)
+
+    visit root_path
+    click_link "Jobs"
+
+    click_button "Edit Job"
+    expect(page).to have_field("Company")
+
+    page.find(".glyphicon-remove").click
+    expect(page).to_not have_field("Company")
+  end
+
+  scenario "Failing to edit a job" do
+    user = FactoryGirl.create(:user)
+    job = FactoryGirl.create(:job, user: user)
+    login_as(user, :scope => :user)
+
+    visit root_path
+    click_link "Jobs"
+
+    click_button "Edit Job"
+    fill_in "Link", with: "catsitter"
+    click_button "Edit Job"
+
+    expect(page).to have_field("Link")
+    expect(page).to have_content("Invalid")
+  end
 end
 

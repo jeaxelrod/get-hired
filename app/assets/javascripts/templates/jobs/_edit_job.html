@@ -5,5 +5,5 @@
   <div class="alert alert-warning" ng-show="job.linkError">Url is Invalid <small>(Please include http:// or https://)</small></div>
   <input ng-model="job.link"     class="form-control" placeholder="Link">
 </td>
-<td><button class="btn">Edit Job</button></td>
+<td><button ng-click="editJob(job)" class="btn">Edit Job</button></td>
 

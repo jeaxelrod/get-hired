@@ -30,6 +30,7 @@ app.controller("JobsIndexController", ["$scope", "$http",
       success(function(data, status, headers, config) {
         $scope.jobs = data.map(function(job) {
           return {
+            id:       job.id,
             position: job.position,
             company:  job.company,
             link:     job.link
@@ -67,7 +68,12 @@ app.controller("JobsIndexController", ["$scope", "$http",
         });
     }
     $scope.editJob = function(job) {
-      $http.put('/user/jobs/' + job.id, {job: job}).
+      console.log(job);
+      var editJob = { id:       job.id,
+                      position: job.position,
+                      company:  job.company,
+                      link:     job.link };
+      $http.put('/user/jobs/' + job.id, {job: editJob}).
         success(function(data, status, headers, config) {
           console.log("Edit Job data: ", data);
           for (var i=0; i < $scope.jobs.length; i++) {
@@ -76,6 +82,7 @@ app.controller("JobsIndexController", ["$scope", "$http",
               currentJob.position = data.position;
               currentJob.company = data.company;
               currentJob.link = data.link;
+              currentJob.edit = false;
               break;
             }
           }
