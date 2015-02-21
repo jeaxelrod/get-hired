@@ -5,13 +5,13 @@ RSpec.feature "Authentications", :type => :feature, js: true do
   Warden.test_mode!
 
   scenario "User logs in successfully" do
-    FactoryGirl.create(:user) 
+    user = FactoryGirl.create(:user) 
 
     visit root_path
     click_on "Sign In"
 
-    fill_in "Email",    with: "john.doe@gmail.com"
-    fill_in "Password", with: "password"
+    fill_in "Email",    with: user.email 
+    fill_in "Password", with: user.password 
     click_button "Sign In"
 
     expect(current_url).to_not match(/login/) 
@@ -44,13 +44,13 @@ RSpec.feature "Authentications", :type => :feature, js: true do
   end
 
   scenario "User logs in and out successfully" do
-    FactoryGirl.create(:user)
+    user = FactoryGirl.create(:user)
     
     visit root_path
     click_on "Sign In"
 
-    fill_in "Email",    with: "john.doe@gmail.com"
-    fill_in "Password", with: "password"
+    fill_in "Email",    with: user.email 
+    fill_in "Password", with: user.password 
     click_button "Sign In"
     click_link "Log Out"
 
