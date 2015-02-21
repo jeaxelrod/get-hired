@@ -71,7 +71,7 @@ app.controller("JobsIndexController", ["$scope", "$http",
             job.linkError = true;
           }
         });
-    }
+    };
     $scope.editJob = function(job) {
       console.log(job);
       var editJob = { id:       job.id,
@@ -103,7 +103,21 @@ app.controller("JobsIndexController", ["$scope", "$http",
             }
           }
         });
-    }
+    };
+    $scope.deleteJob = function(job) {
+      $http.delete('/user/jobs/' + job.id).
+        success(function(data, status, headers, config) {
+          for (var i=0; i < $scope.jobs.length; i++) {
+            var currentJob = $scope.jobs[i];
+            if (currentJob.id === job.id) {
+              $scope.jobs.splice(i, 1);
+              break;
+            }
+          }
+        }).
+        error(function(data, status, headers, config) {
+        });
+    };
   }
 ]);
 

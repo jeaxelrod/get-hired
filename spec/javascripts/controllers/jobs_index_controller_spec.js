@@ -126,5 +126,17 @@ describe("JobsIndexController", function() {
     expect(scope.newJob.length).toBe(0);
     expect(scope.jobs).toContain(newJob.job);
   });
+  
+  it("should delete jobs", function() {
+    var job = jobs[0];
+    $httpBackend.expectDELETE("/user/jobs/" + job.id).
+      respond(204);
+
+    scope.deleteJob(job);
+    $httpBackend.flush();
+    
+    expect(scope.jobs).not.toContain(job);
+  });
+
 
 });
