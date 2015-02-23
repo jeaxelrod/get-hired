@@ -18,7 +18,6 @@ RSpec.describe JobApplication, :type => :model do
 
   it "belongs to a user" do
     job_application = FactoryGirl.create(:job_application)
-    job_application.user = job_application.job.user
     expect(job_application.user).to be_valid
   end
 

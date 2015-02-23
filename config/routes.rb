@@ -6,7 +6,9 @@ Rails.application.routes.draw do
   end
 
   scope "/user" do
-    resources :jobs, defaults: { format: 'json' }
+    resources :jobs, defaults: { format: 'json' } do
+      resources :job_applications, defaults: { format: 'json' }
+    end
   end
 
   root 'home#index'
