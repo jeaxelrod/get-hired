@@ -56,6 +56,26 @@ describe "Jobs API" do
     json = JSON.parse(response.body)
     expect(json).to eq({"error" => "You need to sign in or sign up before continuing."})
   end
+
+  it "should let user create a new job without a link" do
+    user = FactoryGirl.create(:user)
+    login_as(user, :scope => :user)
+    
+    post "/user/jobs", :job => { position: "Internship",
+                                 company:  "Google" }
+    expect(response).to be_success
+
+    json = JSON.parse(response.body)
+    expect(json["position"]).to eq("Internship")
+    expect(json["company"]).to  eq("Google")
+    expect(json["link"]).to     eq(nil)
+
+    job = user.jobs[0]
+    expect(job["position"]).to eq("Internship")
+    expect(job["company"]).to  eq("Google")
+    expect(job["link"]).to     eq(nil)
+  end
+    
   
   it "should edit jobs" do
     user = FactoryGirl.create(:user)
