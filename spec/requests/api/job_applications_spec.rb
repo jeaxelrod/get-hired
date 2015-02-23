@@ -39,10 +39,64 @@ describe "Job Applications API" do
     expect(json).to eq({"error" => "You need to sign in or sign up before continuing."})
   end
 
-  it "should return all job applications for a user"
-  it "should fail to return all job applications for a user if user isn't logged in"
-  it "should return all job applications for a job"
-  it "should fail to return all job applications for a job if user isn't logged in"
+  it "should return all job applications for a user" do
+    job1 = FactoryGirl.create(:job)
+    user = job1.user
+    job2  = FactoryGirl.create(:job, user: user)
+    app1 = FactoryGirl.create(:job_application, job: job1)
+    app2 = FactoryGirl.create(:job_application, job: job2)
+    login_as(user, :scope => :user)
+
+    get "user/job_applications"
+
+    expect(response).to be_success
+    json = JSON.parse(response.body)
+    expect(json).to include(JSON.parse(app1.to_json))
+    expect(json).to include(JSON.parse(app2.to_json))
+  end
+
+  it "should fail to return all job applications for a user if user isn't logged in" do
+    job1 = FactoryGirl.create(:job)
+    user = job1.user
+    job2  = FactoryGirl.create(:job, user: user)
+    app1 = FactoryGirl.create(:job_application, job: job1)
+    app2 = FactoryGirl.create(:job_application, job: job2)
+
+    get "user/job_applications"
+
+    expect(response).to_not be_success
+    json = JSON.parse(response.body)
+    expect(json).to eq({"error" => "You need to sign in or sign up before continuing."})
+  end
+
+  it "should return all job applications for a job" do
+    job = FactoryGirl.create(:job)
+    user = job.user
+    app1 = FactoryGirl.create(:job_application, job: job)
+    app2 = FactoryGirl.create(:job_application, job: job)
+    login_as(user, :scope => :user)
+
+    get "user/jobs/#{job.id}/job_applications"
+
+    expect(response).to be_success
+    json = JSON.parse(response.body)
+    expect(json).to include(JSON.parse(app1.to_json))
+    expect(json).to include(JSON.parse(app2.to_json))
+  end
+
+  it "should fail to return all job applications for a job if user isn't logged in" do
+    job = FactoryGirl.create(:job)
+    user = job.user
+    app1 = FactoryGirl.create(:job_application, job: job)
+    app2 = FactoryGirl.create(:job_application, job: job)
+
+    get "user/jobs/#{job.id}/job_applications"
+
+    expect(response).to_not be_success
+    json = JSON.parse(response.body)
+    expect(json).to eq({"error" => "You need to sign in or sign up before continuing."})
+  end
+
   it "should create new job applications"
   it "should fail to create a job application if user isn't logged in"
   it "should edit job application"

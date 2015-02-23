@@ -9,6 +9,8 @@ Rails.application.routes.draw do
     resources :jobs, defaults: { format: 'json' } do
       resources :job_applications, defaults: { format: 'json' }
     end
+
+    get "/job_applications", to: "job_applications#user_index", defaults: { format: 'json' }
   end
 
   root 'home#index'
