@@ -4,6 +4,7 @@
     "angular": "latest",
     "angular-mocks": "latest",
     "angular-ui-router": "latest",
+    "angular-resource": "latest",
     "bootstrap-sass-official": "latest"
   }
 }

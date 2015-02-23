@@ -2,9 +2,10 @@
 
 var app = angular.module("getHired");
 
-app.controller("JobsIndexController", ["$scope", "$http", 'FlashService',
-  function($scope, $http, FlashService) {
+app.controller("JobsIndexController", ["$scope", "$http", '$resource', 'FlashService',
+  function($scope, $http, $resource, FlashService) {
     var jobCount = 0;
+    var Job = $resource('/user/jobs/:id', {id: '@id' }, { 'update': { method: 'PUT' }}); 
     $scope.newJob = [];
     $scope.subtractNewJob = function(id) {
       var newJobIndex = -1;
@@ -26,19 +27,79 @@ app.controller("JobsIndexController", ["$scope", "$http", 'FlashService',
     $scope.getNumber = function(num) {
       return new Array(num);
     };
-    $http.get('/user/jobs').
-      success(function(data, status, headers, config) {
-        $scope.jobs = data.map(function(job) {
+
+    $scope.getJobs = function() {
+      Job.query(null,  function(response) {
+        $scope.jobs = response.map(function(job) {
           return {
             id:       job.id,
             position: job.position,
             company:  job.company,
             link:     job.link
-          }
+          };
         });
-      }).
-      error(function(data, status, headers, config) {
+      }, function(response) {
+        //Job get error
       });
+    };
+    $scope.createJob = function(job) {
+      console.log(job);
+      Job.save({id: ""}, job, function(response) {
+        var data = response; 
+        $scope.subtractNewJob(job.id);
+        $scope.jobs.unshift({ id:       data.id,
+                              position: data.position,
+                              company:  data.company,
+                              link:     data.link });
+      }, function(response) {
+        console.log("create Job error: ", response);
+        if (response.data.errors.link) {
+          job.linkError = true;
+        }
+      });
+    };
+    $scope.editJob = function(job) {
+      var editJob = { id:       job.id,
+                      position: job.position,
+                      company:  job.company,
+                      link:     job.link };
+      Job.update(editJob, function(response) {
+        var data = response;
+        for (var i=0; i < $scope.jobs.length; i++) {
+          var currentJob = $scope.jobs[i];
+          if (currentJob.id === job.id) {
+            currentJob.position = data.position;
+            currentJob.company = data.company;
+            currentJob.link = data.link;
+            delete currentJob.editJob;
+            break;
+          }
+        }
+      }, function(response) {
+        if (response.data.errors.link) {
+          for (var i=0; i< $scope.jobs.length; i++) {
+            var currentJob = $scope.jobs[i];
+            if (currentJob.id === job.id) {
+              currentJob.linkError = true;
+            }
+          }
+        }
+      });
+    };
+    $scope.deleteJob = function(job) {
+      Job.delete({id: job.id}, job, function(response) {
+        for (var i=0; i < $scope.jobs.length; i++) {
+          var currentJob = $scope.jobs[i];
+          if (currentJob.id === job.id) {
+            $scope.jobs.splice(i, 1);
+            break;
+          }
+        }
+      }, function(response) {
+        FlashService.addMessage({messasge: "Failed to Delete Job", type: "warning"});
+      });
+    };
+
     $scope.jobUrl = function(job) {
       if (job.editJob) {
         return "jobs/_edit_job.html"
@@ -57,68 +118,8 @@ app.controller("JobsIndexController", ["$scope", "$http", 'FlashService',
       job.editJob = undefined;
       job.linkError = undefined;
     };
-    $scope.createJob = function(job) {
-      $http.post('/user/jobs', {job: job}).
-        success(function(data, status, headers, config) {
-          $scope.subtractNewJob(job.id);
-          $scope.jobs.unshift({ id:       data.id,
-                                position: data.position,
-                                company:  data.company,
-                                link:     data.link });
-        }).
-        error(function(data, status, headers, config) {
-          if (data.errors.link) {
-            job.linkError = true;
-          }
-        });
-    };
-    $scope.editJob = function(job) {
-      console.log(job);
-      var editJob = { id:       job.id,
-                      position: job.position,
-                      company:  job.company,
-                      link:     job.link };
-      $http.put('/user/jobs/' + job.id, {job: editJob}).
-        success(function(data, status, headers, config) {
-          console.log("Edit Job data: ", data);
-          for (var i=0; i < $scope.jobs.length; i++) {
-            var currentJob = $scope.jobs[i];
-            if (currentJob.id === job.id) {
-              currentJob.position = data.position;
-              currentJob.company = data.company;
-              currentJob.link = data.link;
-              currentJob.editJob = undefined;
-              break;
-            }
-          }
-        }).
-        error(function(data, status, headers, config) {
-          console.log("Edit Job failure data: ", data);
-          if (data.errors.link) {
-            for (var i=0; i< $scope.jobs.length; i++) {
-              var currentJob = $scope.jobs[i];
-              if (currentJob.id === job.id) {
-                currentJob.linkError = true;
-              }
-            }
-          }
-        });
-    };
-    $scope.deleteJob = function(job) {
-      $http.delete('/user/jobs/' + job.id).
-        success(function(data, status, headers, config) {
-          for (var i=0; i < $scope.jobs.length; i++) {
-            var currentJob = $scope.jobs[i];
-            if (currentJob.id === job.id) {
-              $scope.jobs.splice(i, 1);
-              break;
-            }
-          }
-        }).
-        error(function(data, status, headers, config) {
-          FlashService.addMessage({messasge: "Failed to Delete Job", type: "warning"});
-        });
-    };
+
+
     $scope.beginDelete = function(job) {
       job.deleteJob = true;
     };
@@ -128,6 +129,8 @@ app.controller("JobsIndexController", ["$scope", "$http", 'FlashService',
     $scope.startDelete = function(job) {
       $scope.deleteJob(job);
     };
+
+    $scope.getJobs();
   }
 ]);
 
