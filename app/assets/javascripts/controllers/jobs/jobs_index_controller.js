@@ -44,7 +44,7 @@ app.controller("JobsIndexController", ["$scope", "$http", '$resource', 'FlashSer
     };
     $scope.createJob = function(job) {
       console.log(job);
-      Job.save({id: ""}, job, function(response) {
+      Job.save({id: ""}, {job: job}, function(response) {
         var data = response; 
         $scope.subtractNewJob(job.id);
         $scope.jobs.unshift({ id:       data.id,
@@ -63,7 +63,7 @@ app.controller("JobsIndexController", ["$scope", "$http", '$resource', 'FlashSer
                       position: job.position,
                       company:  job.company,
                       link:     job.link };
-      Job.update(editJob, function(response) {
+      Job.update({id: editJob.id}, {job: editJob}, function(response) {
         var data = response;
         for (var i=0; i < $scope.jobs.length; i++) {
           var currentJob = $scope.jobs[i];

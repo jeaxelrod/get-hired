@@ -22,7 +22,7 @@ describe("JobsIndexController", function() {
 
   it("should create new jobs", function() {
     var newJob = { position: "Internship", company: "Facebook", link:"http://facebook.com" };
-    $httpBackend.expectPOST("/user/jobs", newJob).
+    $httpBackend.expectPOST("/user/jobs", {job: newJob}).
       respond(newJob);
     scope.createJob(newJob);
     $httpBackend.flush();
@@ -36,7 +36,7 @@ describe("JobsIndexController", function() {
     var newJob = scope.newJob[0];
     newJob.job = { position: "Internship", company: "Facebook", link: "facebook.com" };
 
-    $httpBackend.expectPOST("/user/jobs", newJob).
+    $httpBackend.expectPOST("/user/jobs", {job: newJob}).
       respond(422, {errors: {link: ["invalid url"]}});
     scope.createJob(newJob);
     $httpBackend.flush();
@@ -52,7 +52,7 @@ describe("JobsIndexController", function() {
                     position: "Software Engineer", 
                     company:  job.company, 
                     link:     job.link };
-    $httpBackend.expectPUT("/user/jobs/1", editJob).
+    $httpBackend.expectPUT("/user/jobs/1", {job: editJob}).
       respond(editJob);
     scope.editJob(editJob);
     $httpBackend.flush();
@@ -68,7 +68,7 @@ describe("JobsIndexController", function() {
                     position: job.position,
                     company:  job.company,
                     link:     "fcebk.com" };
-    $httpBackend.expectPUT("/user/jobs/1", editJob).
+    $httpBackend.expectPUT("/user/jobs/1", {job: editJob}).
       respond(400, {errors: {link: ["Invalid url"]}});
     scope.editJob(editJob);
     $httpBackend.flush();
@@ -115,7 +115,7 @@ describe("JobsIndexController", function() {
     newJob.job = { position: "Internship", company: "Facebook", link:"http://facebook.com" };
     expect(scope.newJob.length).toBe(1);
 
-    $httpBackend.expectPOST("/user/jobs", newJob).
+    $httpBackend.expectPOST("/user/jobs", {job: newJob}).
       respond(newJob.job);
     scope.createJob(newJob);
     $httpBackend.flush();
