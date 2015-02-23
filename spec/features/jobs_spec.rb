@@ -114,5 +114,21 @@ RSpec.feature "Jobs", :type => :feature, js: true do
     expect(page).to have_field("Link")
     expect(page).to have_content("Invalid")
   end
+
+  scenario "Deleting a job" do
+    user = FactoryGirl.create(:user)
+    job = FactoryGirl.create(:job, user: user)
+    login_as(user, :scope => :user)
+
+    visit root_path
+    click_link "Jobs"
+
+    click_button "Delete"
+    # Confirmation modal appears"
+    click_button "Delete Job"
+
+    expect(page).to_not have_content(job.position)
+    expect(user.jobs.length).to eq(1)
+  end
 end
 

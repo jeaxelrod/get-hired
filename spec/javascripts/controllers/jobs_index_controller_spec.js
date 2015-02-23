@@ -138,5 +138,14 @@ describe("JobsIndexController", function() {
     expect(scope.jobs).not.toContain(job);
   });
 
+  it("should handle failures to delete jobs", function() {
+    var job = jobs[0];
+    $httpBackend.expectDELETE("/user/jobs/" + job.id ).
+      respond(400, { errors: "Failureto delete job" });
+    scope.deleteJob(job);
 
+    $httpBackend.flush();
+
+    expect(scope.jobs).toContain(job);
+  });
 });
