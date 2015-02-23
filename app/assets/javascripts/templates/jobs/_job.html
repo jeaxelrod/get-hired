@@ -2,5 +2,17 @@
 <td>{{job.position}}</td>
 <td>{{job.company}}</td>
 <td><a target="_blank" href={{job.link}}>{{job.link.split("http://")[1]}}</a></td>
-<td><button ng-click="beginEdit(job)" class="btn">Edit Job</button></td>
+<td ng-show="!job.deleteJob">
+  <button ng-click="beginEdit(job)" class="btn">Edit</button>
+  <button ng-click="beginDelete(job)" class="btn btn-xs btn-link">Delete</button>
+</td>
+<td ng-show="job.deleteJob">
+  <div class="panel panel-default">
+    <div class="panel-body text-center">
+      <p>Are you sure?</p> 
+      <button ng-click="startDelete(job)" class="btn btn-sm">Delete Job</button>
+      <button ng-click="endDelete(job)"   class="btn btn-sm">Cancel</button>
+    </div>
+  </div>
+</td>
 

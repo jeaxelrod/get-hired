@@ -73,7 +73,7 @@ RSpec.feature "Jobs", :type => :feature, js: true do
     visit root_path
     click_link "Jobs"
     
-    click_button "Edit Job"
+    click_button "Edit"
     expect(page).to have_field("Link")
 
     fill_in "Position", with: "Cat Sitter"
@@ -91,7 +91,7 @@ RSpec.feature "Jobs", :type => :feature, js: true do
     visit root_path
     click_link "Jobs"
 
-    click_button "Edit Job"
+    click_button "Edit"
     fill_in "Company", with: "meow"
 
     page.find(".glyphicon-remove").click
@@ -107,7 +107,7 @@ RSpec.feature "Jobs", :type => :feature, js: true do
     visit root_path
     click_link "Jobs"
 
-    click_button "Edit Job"
+    click_button "Edit"
     fill_in "Link", with: "catsitter"
     click_button "Edit Job"
 
@@ -122,13 +122,17 @@ RSpec.feature "Jobs", :type => :feature, js: true do
 
     visit root_path
     click_link "Jobs"
+    expect(page).to have_content(job.position)
+
+    click_button "Delete"
+    # Test cancel button
+    click_button "Cancel"
 
     click_button "Delete"
     # Confirmation modal appears"
     click_button "Delete Job"
 
     expect(page).to_not have_content(job.position)
-    expect(user.jobs.length).to eq(1)
   end
 end
 

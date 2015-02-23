@@ -2,8 +2,8 @@
 
 var app = angular.module("getHired");
 
-app.controller("JobsIndexController", ["$scope", "$http",
-  function($scope, $http) {
+app.controller("JobsIndexController", ["$scope", "$http", 'FlashService',
+  function($scope, $http, FlashService) {
     var jobCount = 0;
     $scope.newJob = [];
     $scope.subtractNewJob = function(id) {
@@ -116,7 +116,17 @@ app.controller("JobsIndexController", ["$scope", "$http",
           }
         }).
         error(function(data, status, headers, config) {
+          FlashService.addMessage({messasge: "Failed to Delete Job", type: "warning"});
         });
+    };
+    $scope.beginDelete = function(job) {
+      job.deleteJob = true;
+    };
+    $scope.endDelete = function(job) {
+      job.deleteJob = false;
+    };
+    $scope.startDelete = function(job) {
+      $scope.deleteJob(job);
     };
   }
 ]);
