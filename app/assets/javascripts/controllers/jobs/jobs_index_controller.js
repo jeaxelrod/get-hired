@@ -43,7 +43,6 @@ app.controller("JobsIndexController", ["$scope", "$http", '$resource', 'FlashSer
       });
     };
     $scope.createJob = function(job) {
-      console.log(job);
       Job.save({id: ""}, {job: job}, function(response) {
         var data = response; 
         $scope.subtractNewJob(job.id);
@@ -52,7 +51,6 @@ app.controller("JobsIndexController", ["$scope", "$http", '$resource', 'FlashSer
                               company:  data.company,
                               link:     data.link });
       }, function(response) {
-        console.log("create Job error: ", response);
         if (response.data.errors.link) {
           job.linkError = true;
         }
@@ -107,12 +105,14 @@ app.controller("JobsIndexController", ["$scope", "$http", '$resource', 'FlashSer
         return "jobs/_job.html"
       }
     };
+    $scope.newJobUrl = function() {
+      return "jobs/_new_job.html"
+    };
     $scope.beginEdit = function(job) {
       job.editJob = {id:       job.id,
                      position: job.position,
                      company:  job.company,
                      link:     job.link};
-      console.log("Begin edit job: ", job);
     };
     $scope.closeEdit = function(job) {
       job.editJob = undefined;
