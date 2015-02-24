@@ -97,8 +97,55 @@ describe "Job Applications API" do
     expect(json).to eq({"error" => "You need to sign in or sign up before continuing."})
   end
 
-  it "should create new job applications"
-  it "should fail to create a job application if user isn't logged in"
+  it "should create new job applications" do
+    job = FactoryGirl.create(:job)
+    user = job.user
+    new_app = { date_applied:   DateTime.now,
+                comments:      "Some comments",
+                communication: "John HR",
+                status:        "Applied" }
+    login_as(user, :scope => :user)
+
+    post "/user/jobs/#{job.id}/job_applications", :job_application => new_app
+
+    expect(response).to be_success
+    json = JSON.parse(response.body)
+    expect(response).to eq(JSON.parse(job.job_applications[0]).to_json)
+    expect(response).to eq(JSON.parse(user.job_applications[0]).to_json)
+  end
+
+  it "should fail to create a job application if user isn't logged in" do
+    job = FactoryGirl.create(:job)
+    user = job.user
+    new_app = { date_applied:   DateTime.now,
+                comments:      "Some comments",
+                communication: "John HR",
+                status:        "Applied" }
+
+    post "/user/jobs/#{job.id}/job_applications", :job_application => new_app
+
+    expect(response).to_not be_success
+    json = JSON.parse(response.body)
+    expect(json).to eq({"error" => "You need to sign in or sign up before continuing."})
+  end
+
+  it "should fail to create job application from another user's job" do
+    user1 = FactoryGirl.create(:user)
+    user2 = FactoryGirl.create(:user)
+    job = FactoryGirl.create(:job, user: user2)
+    login_as(user1, :scope => :user)
+    new_app = { date_applied:   DateTime.now,
+                comments:      "Some comments",
+                communication: "John HR",
+                status:        "Applied" }
+
+    post "/user/jobs/#{job.id}/job_applications", :job_application => new_app
+
+    expect(response).to_not be_success
+    json = JSON.parse(response.body)
+    expect(json).to eq({"error" => "Failed to create job applicaiton"})
+  end
+
   it "should edit job application"
   it "should fail to edit job application if user isn't logged in"
   it "should delete job application"
