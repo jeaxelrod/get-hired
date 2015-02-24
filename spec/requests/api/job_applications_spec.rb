@@ -110,8 +110,8 @@ describe "Job Applications API" do
 
     expect(response).to be_success
     json = JSON.parse(response.body)
-    expect(response).to eq(JSON.parse(job.job_applications[0]).to_json)
-    expect(response).to eq(JSON.parse(user.job_applications[0]).to_json)
+    expect(json).to eq(JSON.parse(job.job_applications[0].to_json))
+    expect(json).to eq(JSON.parse(user.job_applications[0].to_json))
   end
 
   it "should fail to create a job application if user isn't logged in" do
@@ -143,7 +143,7 @@ describe "Job Applications API" do
 
     expect(response).to_not be_success
     json = JSON.parse(response.body)
-    expect(json).to eq({"error" => "Failed to create job applicaiton"})
+    expect(json).to eq({"error" => "Unable to create job application"})
   end
 
   it "should edit job application"
