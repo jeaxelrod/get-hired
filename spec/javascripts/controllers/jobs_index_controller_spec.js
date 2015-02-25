@@ -137,7 +137,7 @@ describe("JobsIndexController", function() {
   it("should handle failures to delete jobs", function() {
     var job = jobs[0];
     $httpBackend.expectDELETE("/user/jobs/" + job.id ).
-      respond(400, { errors: "Failureto delete job" });
+      respond(400, { errors: "Failure to delete job" });
     scope.deleteJob(job);
 
     $httpBackend.flush();
