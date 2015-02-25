@@ -146,8 +146,34 @@ describe "Job Applications API" do
     expect(json).to eq({"error" => "Unable to create job application"})
   end
 
-  it "should edit job application"
-  it "should fail to edit job application if user isn't logged in"
+  it "should edit job application" do
+    job = FactoryGirl.create(:job)
+    user = job.user
+    app = FactoryGirl.create(:job_application, job: job)
+    edited_app = { comments: "Yay comments" }
+    login_as(user, :scope => :user)
+
+    put "/user/jobs/#{job.id}/job_applications/#{app.id}", :job_application => edited_app
+    
+    expect(response).to be_success
+    json = JSON.parse(response.body)
+    expect(json["comments"]).to eq(edited_app[:comments])
+    expect(job.job_applications[0].to_json).to include(edited_app[:comments])
+  end
+
+  it "should fail to edit job application if user isn't logged in" do 
+    job = FactoryGirl.create(:job)
+    user = job.user
+    app = FactoryGirl.create(:job_application, job: job)
+    edited_app = { comments: "Yay comments" }
+
+    put "/user/jobs/#{job.id}/job_applications/#{app.id}", :job_application => edited_app
+
+    expect(response).to_not be_success
+    json = JSON.parse(response.body)
+    expect(json).to eq({"error" => "You need to sign in or sign up before continuing."})
+  end
+
   it "should delete job application"
   it "should fail to delete job application if user isn't logged in"
 end
