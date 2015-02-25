@@ -174,6 +174,29 @@ describe "Job Applications API" do
     expect(json).to eq({"error" => "You need to sign in or sign up before continuing."})
   end
 
-  it "should delete job application"
-  it "should fail to delete job application if user isn't logged in"
+  it "should delete job application" do
+    job = FactoryGirl.create(:job)
+    user = job.user
+    app = FactoryGirl.create(:job_application, job: job)
+    login_as(user, :scope => :user)
+
+    expect(JobApplication.where(id: app.id)).to_not be_empty 
+
+    delete "/user/jobs/#{job.id}/job_applications/#{app.id}"
+
+    expect(response).to be_success
+    expect(JobApplication.where(id: app.id)).to be_empty 
+  end
+
+  it "should fail to delete job application if user isn't logged in" do
+    job = FactoryGirl.create(:job)
+    user = job.user
+    app = FactoryGirl.create(:job_application, job: job)
+
+    delete "/user/jobs/#{job.id}/job_applications/#{app.id}"
+
+    expect(response).to_not be_success
+    json = JSON.parse(response.body)
+    expect(json).to eq({"error" => "You need to sign in or sign up before continuing."})
+  end
 end

@@ -43,7 +43,7 @@ class JobApplicationsController < ApplicationController
 
   def update
     begin
-      app = current_user.job_applications.find(params[:id])
+      app = current_user.jobs.find(params[:job_id]).job_applications.find(params[:id])
       if app.update(job_application_params)
         render json: app
       else
@@ -51,6 +51,14 @@ class JobApplicationsController < ApplicationController
       end
     rescue ActiveRecord::RecordNotFound => e
       render :status => 422, json: { error: "Unable to edit job application" }
+    end
+  end
+
+  def destroy
+    begin
+      respond_with current_user.jobs.find(params[:job_id]).job_applications.find(params[:id]).destroy
+    rescue ActiveRecord::RecordNotFound => e
+      render :status => 422, json: { error: "Unable to delete job application" }
     end
   end
 
