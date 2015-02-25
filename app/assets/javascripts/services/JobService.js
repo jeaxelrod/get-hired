@@ -13,17 +13,17 @@ app.factory("JobService", ['$rootScope', '$resource',
       setJobs: function(newJobs) {
         jobs = newJobs
       },
-      getJobs: function() {
-        return Job.query(); 
+      getJobs: function(successCallback, failureCallback) {
+        return Job.query(successCallback, failureCallback); 
       },
-      createJob: function(job) {
-        return Job.save({id: ""}, {job: job});
+      createJob: function(job, successCallback, failureCallback) {
+        return Job.save({id: ""}, {job: job}, successCallback, failureCallback);
       },
-      editJob: function(job) {
-        return Job.update({id: job.id }, {job: job});
+      editJob: function(job, successCallback, failureCallback) {
+        return Job.update({id: job.id }, {job: job}, successCallback, failureCallback);
       },
-      deleteJob: function(job) {
-        return Job.delete({id: job. id});
+      deleteJob: function(job, successCallback, failureCallback) {
+        return Job.delete({id: job. id}, successCallback, failureCallback);
       }
     };
   }
