@@ -12,7 +12,7 @@ app.controller("JobsEditController", ["$scope", "$stateParams", "JobAPIService",
     }
     
     $scope.jobs = JobAPIService.jobs();
-    JobAPIService.setJobs(JobService.getJobs(getJobsSuccess, getJobsFailure));
+    JobAPIService.setJobs(JobAPIService.getJobs(getJobsSuccess, getJobsFailure));
 
     $scope.editJob = function(job) {
       var editJob = { id:       job.id,
