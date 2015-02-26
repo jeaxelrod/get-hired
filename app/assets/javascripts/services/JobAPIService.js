@@ -2,7 +2,7 @@
 
 var app = angular.module("getHired");
 
-app.factory("JobService", ['$rootScope', '$resource',
+app.factory("JobAPIService", ['$rootScope', '$resource',
   function($rootScope, $resource) {
     var jobs = [];
     var Job = $resource('/user/jobs/:id', {id: '@id' }, {'update': { method: 'PUT' }});

@@ -1,12 +1,12 @@
 "use strict";
 
-describe("JobService", function() {
-  var JobService, $httpBackend, jobs;
+describe("JobAPIService", function() {
+  var JobAPIService, $httpBackend, jobs;
 
   beforeEach(module("getHired"));
 
-  beforeEach(inject(function(_JobService_, _$httpBackend_) {
-    JobService = _JobService_;
+  beforeEach(inject(function(_JobAPIService_, _$httpBackend_) {
+    JobAPIService = _JobAPIService_;
     $httpBackend = _$httpBackend_;
     jobs = [{ id: 1, position: "Position 1", company: "Company 1", link: "http://link1.com" },
             { id: 2, position: "Position 2", company: "Company 2", link: "http://link2.com"}]
@@ -14,19 +14,19 @@ describe("JobService", function() {
   }));
 
   it("should list all jobs", function() {
-    expect(JobService.jobs()).toEqual([]);
+    expect(JobAPIService.jobs()).toEqual([]);
   });
 
   it("should set jobs", function() {
-    JobService.setJobs(jobs);
-    expect(JobService.jobs()).toEqual(jobs);
+    JobAPIService.setJobs(jobs);
+    expect(JobAPIService.jobs()).toEqual(jobs);
   });
 
   it("should retrieve all jobs", function() {
     $httpBackend.expectGET("/user/jobs").
       respond(jobs);
 
-    var response = JobService.getJobs();
+    var response = JobAPIService.getJobs();
     $httpBackend.flush();
 
     expect(response[0].toJSON()).toEqual(jobs[0]);
@@ -40,7 +40,7 @@ describe("JobService", function() {
     var successCallback = function(response) {
       callbackCalled = true;
     };
-    var response = JobService.getJobs(successCallback);
+    var response = JobAPIService.getJobs(successCallback);
     $httpBackend.flush();
 
     expect(response[0].toJSON()).toEqual(jobs[0]);
@@ -57,7 +57,7 @@ describe("JobService", function() {
       callbackCalled = true;
     };
 
-    var response = JobService.getJobs(successCallback, failureCallback);
+    var response = JobAPIService.getJobs(successCallback, failureCallback);
     $httpBackend.flush();
     
     expect(callbackCalled).toBe(true);
@@ -68,7 +68,7 @@ describe("JobService", function() {
     $httpBackend.expectPOST("/user/jobs", {job: newJob}).
       respond(newJob);
 
-    var response = JobService.createJob(newJob);
+    var response = JobAPIService.createJob(newJob);
     $httpBackend.flush();
 
     expect(response.toJSON()).toEqual(newJob);
@@ -79,7 +79,7 @@ describe("JobService", function() {
     $httpBackend.expectPOST("/user/jobs", {job: newJob}).
       respond(422, {errors: {link: ["invalid url"]}});
 
-    var response = JobService.createJob(newJob);
+    var response = JobAPIService.createJob(newJob);
     $httpBackend.flush();
     
     // A failed create response just returns the data it was given
@@ -95,7 +95,7 @@ describe("JobService", function() {
     $httpBackend.expectPOST("/user/jobs", {job: newJob}).
       respond(newJob);
 
-    var response = JobService.createJob(newJob, callback);
+    var response = JobAPIService.createJob(newJob, callback);
     $httpBackend.flush();
 
     expect(response.toJSON()).toEqual(newJob);
@@ -113,7 +113,7 @@ describe("JobService", function() {
     $httpBackend.expectPOST("/user/jobs", {job: newJob}).
       respond(422, {errors: {link: ["invalid url"]}});
 
-    var response = JobService.createJob(newJob, successCallback, failureCallback);
+    var response = JobAPIService.createJob(newJob, successCallback, failureCallback);
     $httpBackend.flush();
 
     expect(response.job).toEqual(newJob);
@@ -129,7 +129,7 @@ describe("JobService", function() {
     $httpBackend.expectPUT("/user/jobs/" + job.id, {job: editJob}).
       respond(editJob);
 
-    var response = JobService.editJob(editJob);
+    var response = JobAPIService.editJob(editJob);
     $httpBackend.flush();
 
     expect(response.toJSON()).toEqual(editJob);
@@ -149,7 +149,7 @@ describe("JobService", function() {
     $httpBackend.expectPUT("/user/jobs/" + job.id, {job: editJob}).
       respond(editJob);
 
-    var response = JobService.editJob(editJob, successCallback);
+    var response = JobAPIService.editJob(editJob, successCallback);
     $httpBackend.flush();
 
     expect(response.toJSON()).toEqual(editJob);
@@ -165,7 +165,7 @@ describe("JobService", function() {
     $httpBackend.expectPUT("/user/jobs/" + job.id, {job: editJob}).
       respond(400, {errors: {link: ["Invalid url" ]}});
 
-    var response = JobService.editJob(editJob);
+    var response = JobAPIService.editJob(editJob);
     $httpBackend.flush();
 
     expect(response.job).toBe(editJob);
@@ -185,7 +185,7 @@ describe("JobService", function() {
     $httpBackend.expectPUT("/user/jobs/" + job.id, {job: editJob}).
       respond(400, {errors: {link: ["Invalid url" ]}});
 
-    var response = JobService.editJob(editJob, successCallback, failureCallback);
+    var response = JobAPIService.editJob(editJob, successCallback, failureCallback);
     $httpBackend.flush();
 
     expect(response.job).toBe(editJob);
@@ -197,7 +197,7 @@ describe("JobService", function() {
     $httpBackend.expectDELETE("/user/jobs/" + job.id).
       respond(204);
     
-    var response = JobService.deleteJob(job);
+    var response = JobAPIService.deleteJob(job);
     $httpBackend.flush();
 
     // Don't know a better way to test this thing
@@ -213,7 +213,7 @@ describe("JobService", function() {
     $httpBackend.expectDELETE("/user/jobs/" + job.id).
       respond(204);
     
-    var response = JobService.deleteJob(job, successCallback);
+    var response = JobAPIService.deleteJob(job, successCallback);
     $httpBackend.flush();
 
     // Don't know a better way to test this thing
@@ -226,7 +226,7 @@ describe("JobService", function() {
     $httpBackend.expectDELETE("/user/jobs/" + job.id).
       respond(400, { errors: "Failure to delete job"});
     
-    var response = JobService.deleteJob(job);
+    var response = JobAPIService.deleteJob(job);
     $httpBackend.flush();
 
     expect(response.$resolved).toBe(true)
@@ -242,7 +242,7 @@ describe("JobService", function() {
     $httpBackend.expectDELETE("/user/jobs/" + job.id).
       respond(400, { errors: "Failure to delete job"});
     
-    var response = JobService.deleteJob(job, successCallback, failureCallback);
+    var response = JobAPIService.deleteJob(job, successCallback, failureCallback);
     $httpBackend.flush();
 
     expect(response.$resolved).toBe(true)
