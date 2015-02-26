@@ -66,6 +66,33 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
           controller: "NavController"
         }
       }
+    })
+    .state('newJob', {
+      url: '/jobs/new',
+      views: {
+        "": {
+          templateUrl: "jobs/new.html",
+          controller: "JobsNewController"
+        },
+        "nav": {
+          templateUrl: "nav/navbar.html",
+          controller: "NavController"
+        }
+      }
+    })
+    .state('editJob', {
+      url: "jobs/edit/:jobId",
+      views: {
+        "": {
+          templateUrl: "jobs/edit.html",
+          controller: "JobsEditController"
+        },
+        "nav": {
+          templateUrl: "nav/navbar.html",
+          controller: "NavController"
+        }
+      }
     });
+
   $urlRouterProvider.otherwise('/');
 }]);
