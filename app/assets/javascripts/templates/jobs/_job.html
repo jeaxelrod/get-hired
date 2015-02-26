@@ -2,17 +2,7 @@
 <td>{{job.position}}</td>
 <td>{{job.company}}</td>
 <td><a target="_blank" href={{job.link}}>{{job.link.split("http://")[1]}}</a></td>
-<td ng-show="!job.deleteJob">
-  <button ui-sref="editJob({jobId: {{job.id}}})" class="btn">Edit</button>
-  <button ng-click="beginDelete(job)" class="btn btn-xs btn-link">Delete</button>
+<td>
+  <button ui-sref="editJob({jobId: {{job.id}}})"   class="btn">Edit</button>
+  <button ui-sref="deleteJob({jobId: {{job.id}}})" class="btn btn-xs btn-link">Delete</button>
 </td>
-<td ng-show="job.deleteJob">
-  <div class="panel panel-default">
-    <div class="panel-body text-center">
-      <p>Are you sure?</p> 
-      <button ng-click="startDelete(job)" class="btn btn-sm">Delete Job</button>
-      <button ng-click="endDelete(job)"   class="btn btn-sm">Cancel</button>
-    </div>
-  </div>
-</td>
-

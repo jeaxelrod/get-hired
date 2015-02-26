@@ -92,6 +92,19 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
           controller: "NavController"
         }
       }
+    })
+    .state('deleteJob', {
+      url: "job/delete/:jobId",
+      views: {
+        "": {
+          templateUrl: "jobs/delete.html",
+          controller: "JobsDeleteController"
+        },
+        "nav": {
+          templateUrl: "nav/navbar.html",
+          controller: "NavController"
+        }
+      }
     });
 
   $urlRouterProvider.otherwise('/');

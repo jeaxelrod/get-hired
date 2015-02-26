@@ -1,0 +1,13 @@
+<th>{{$index + 1}}</th>
+<td>{{job.position}}</td>
+<td>{{job.company}}</td>
+<td><a target="_blank" href={{job.link}}>{{job.link.split("http://")[1]}}</a></td>
+<td>
+  <div class="panel panel-default">
+    <div class="panel-body text-center">
+      <p>Are you sure?</p> 
+      <button ng-click="startDelete(job)" class="btn btn-sm">Delete Job</button>
+      <button ui-sref="jobs"              class="btn btn-sm">Cancel</button>
+    </div>
+  </div>
+</td>
