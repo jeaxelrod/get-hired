@@ -2,16 +2,16 @@
 
 var app = angular.module("getHired");
 
-app.controller("JobsIndexController", ["$scope", "JobAPIService", "FlashService",
-  function($scope, JobAPIService, FlashService) {
-    $scope.jobs = JobAPIService.jobs();
+app.controller("JobsIndexController", ["$scope", "JobsService", "FlashService",
+  function($scope, JobsService, FlashService) {
+    $scope.jobs = JobsService.jobs();
     var getJobsSuccess = function(response) {
       $scope.jobs = response;
     };
     var getJobsFailure = function(response) {
       // Handle error to retreive jobs
     };
-    JobAPIService.setJobs(JobAPIService.getJobs(getJobsSuccess, getJobsFailure));
+    JobsService.setJobs(JobsService.getJobs(getJobsSuccess, getJobsFailure));
     $scope.jobUrl = "jobs/_job.html"; 
 
   }

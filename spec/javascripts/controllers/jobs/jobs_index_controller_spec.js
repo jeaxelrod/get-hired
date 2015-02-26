@@ -1,11 +1,11 @@
 "use strict"
 
 describe("JobsIndexController", function() {
-  var scope, controller, $httpBackend, JobAPIService, jobs;
+  var scope, controller, $httpBackend, JobsService, jobs;
 
   beforeEach(module('getHired'));
 
-  beforeEach(inject(function($rootScope, $controller, _$httpBackend_, _JobAPIService_) {
+  beforeEach(inject(function($rootScope, $controller, _$httpBackend_, _JobsService_) {
     scope = $rootScope.$new();
     $httpBackend = _$httpBackend_;
     jobs = [{ id: 1, position: "Position 1", company: "Company 1", link: "http://link1.com" },

@@ -2,16 +2,16 @@
 
 var app = angular.module("getHired");
 
-app.controller("JobsDeleteController", ["$scope", "JobAPIService", "$stateParams", "FlashService",
-  function($scope, JobAPIService, $stateParams, FlashService) {
-    $scope.jobs = JobAPIService.jobs();
+app.controller("JobsDeleteController", ["$scope", "JobsService", "$stateParams", "FlashService",
+  function($scope, JobsService, $stateParams, FlashService) {
+    $scope.jobs = JobsService.jobs();
     var getJobsSuccess = function(response) {
       $scope.jobs = response;
     };
     var getJobsFailure = function(response) {
       // Handle error to retreive jobs
     };
-    JobAPIService.setJobs(JobAPIService.getJobs(getJobsSuccess, getJobsFailure));
+    JobsService.setJobs(JobsService.getJobs(getJobsSuccess, getJobsFailure));
 
     $scope.jobUrl = function(job) {
       if (job.id == $stateParams.jobId) {
@@ -30,12 +30,12 @@ app.controller("JobsDeleteController", ["$scope", "JobAPIService", "$stateParams
             break;
           }
         }
-        JobAPIService.setJobs($scope.jobs);
+        JobsService.setJobs($scope.jobs);
       };
       var failureCallback = function(response) {
         FlashService.addMessage({message: "Failed to Delete Job", type: "warning"});
       };
-      JobAPIService.deleteJob(job, successCallback, failureCallback);
+      JobsService.deleteJob(job, successCallback, failureCallback);
     };
   }
 ]);

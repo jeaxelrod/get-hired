@@ -2,8 +2,8 @@
 
 var app = angular.module("getHired");
 
-app.controller("JobsEditController", ["$scope", "$stateParams", "JobAPIService", "$state",
-  function($scope, $stateParams, JobAPIService, $state) {
+app.controller("JobsEditController", ["$scope", "$stateParams", "JobsService", "$state",
+  function($scope, $stateParams, JobsService, $state) {
     var getJobsSuccess = function(response) {
       $scope.jobs = response;
     };
@@ -11,8 +11,8 @@ app.controller("JobsEditController", ["$scope", "$stateParams", "JobAPIService",
       // Handle error to retrieve jobs
     }
     
-    $scope.jobs = JobAPIService.jobs();
-    JobAPIService.setJobs(JobAPIService.getJobs(getJobsSuccess, getJobsFailure));
+    $scope.jobs = JobsService.jobs();
+    JobsService.setJobs(JobsService.getJobs(getJobsSuccess, getJobsFailure));
 
     $scope.editJob = function(job) {
       var successCallback = function(response) {
@@ -23,7 +23,7 @@ app.controller("JobsEditController", ["$scope", "$stateParams", "JobAPIService",
             break;
           }
         }
-        JobAPIService.setJobs($scope.jobs);
+        JobsService.setJobs($scope.jobs);
         $state.go("jobs");
       };
       var failureCallback = function(response) {
@@ -37,7 +37,7 @@ app.controller("JobsEditController", ["$scope", "$stateParams", "JobAPIService",
         }
       };
 
-      JobAPIService.editJob(job, successCallback, failureCallback);
+      JobsService.editJob(job, successCallback, failureCallback);
     };
 
     $scope.jobUrl = function(job) {

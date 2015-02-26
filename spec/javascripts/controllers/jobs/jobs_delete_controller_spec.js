@@ -1,7 +1,7 @@
 "use strict";
 
 describe("JobsDeleteController", function() {
-  var scope, controller, $httpBackend, JobAPIService, jobs;
+  var scope, controller, $httpBackend, JobsService, jobs;
 
   beforeEach(module("getHired"));
 
