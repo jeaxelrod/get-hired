@@ -48,9 +48,9 @@ app.controller("JobsNewController", ["$scope", "JobAPIService", "$state",
       var successCallback = function(response) {
         var index = $scope.newJobsList.indexOf(job);
         if (index != -1) {
-          $scope.newJobs.splice(index, 1); 
+          $scope.newJobsList.splice(index, 1); 
         }
-        $scope.jobs.unshift(response);
+        JobAPIService.setJobs($scope.jobs.unshift(response));
       }
       var failureCallback = function(response) {
         if (response.data.errors.link) {

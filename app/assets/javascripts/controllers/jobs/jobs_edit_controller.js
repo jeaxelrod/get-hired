@@ -2,8 +2,8 @@
 
 var app = angular.module("getHired");
 
-app.controller("JobsEditController", ["$scope", "$stateParams", "JobAPIService",
-  function($scope, $stateParams, JobAPIService) {
+app.controller("JobsEditController", ["$scope", "$stateParams", "JobAPIService", "$state",
+  function($scope, $stateParams, JobAPIService, $state) {
     var getJobsSuccess = function(response) {
       $scope.jobs = response;
     };
@@ -24,6 +24,7 @@ app.controller("JobsEditController", ["$scope", "$stateParams", "JobAPIService",
           }
         }
         JobAPIService.setJobs($scope.jobs);
+        $state.go("jobs");
       };
       var failureCallback = function(response) {
         if (response.data.errors.link) {
