@@ -53,6 +53,6 @@ describe("JobsDeleteController", function() {
     scope.deleteJob(job);
     $httpBackend.flush();
 
-    expect(scope.jobs).toContain(job);
+    expect(scope.jobs[0].toJSON()).toEqual(job);
   });
 });

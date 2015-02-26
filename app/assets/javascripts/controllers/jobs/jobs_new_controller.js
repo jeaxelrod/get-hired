@@ -46,7 +46,10 @@ app.controller("JobsNewController", ["$scope", "JobAPIService", "$state",
 
     $scope.createJob = function(job) {
       var successCallback = function(response) {
-        $scope.newJobs.delete(job);
+        var index = $scope.newJobsList.indexOf(job);
+        if (index != -1) {
+          $scope.newJobs.splice(index, 1); 
+        }
         $scope.jobs.unshift(response);
       }
       var failureCallback = function(response) {

@@ -15,23 +15,17 @@ app.controller("JobsEditController", ["$scope", "$stateParams", "JobAPIService",
     JobAPIService.setJobs(JobAPIService.getJobs(getJobsSuccess, getJobsFailure));
 
     $scope.editJob = function(job) {
-      var editJob = { id:       job.id,
-                      position: job.position,
-                      company:  job.company,
-                      link:     job.link };
-      Job.update({id: editJob.id}, {job: editJob}, function(response) {
-        var data = response;
+      var successCallback = function(response) {
         for (var i=0; i < $scope.jobs.length; i++) {
           var currentJob = $scope.jobs[i];
           if (currentJob.id === job.id) {
-            currentJob.position = data.position;
-            currentJob.company = data.company;
-            currentJob.link = data.link;
-            delete currentJob.editJob;
+            $scope.jobs[i] = response;
             break;
           }
         }
-      }, function(response) {
+        JobAPIService.setJobs($scope.jobs);
+      };
+      var failureCallback = function(response) {
         if (response.data.errors.link) {
           for (var i=0; i< $scope.jobs.length; i++) {
             var currentJob = $scope.jobs[i];
@@ -40,7 +34,9 @@ app.controller("JobsEditController", ["$scope", "$stateParams", "JobAPIService",
             }
           }
         }
-      });
+      };
+
+      JobAPIService.editJob(job, successCallback, failureCallback);
     };
 
     $scope.jobUrl = function(job) {

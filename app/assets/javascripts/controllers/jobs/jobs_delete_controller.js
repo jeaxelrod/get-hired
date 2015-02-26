@@ -2,8 +2,8 @@
 
 var app = angular.module("getHired");
 
-app.controller("JobsDeleteController", ["$scope", "JobAPIService", "$stateParams",
-  function($scope, JobAPIService, $stateParams) {
+app.controller("JobsDeleteController", ["$scope", "JobAPIService", "$stateParams", "FlashService",
+  function($scope, JobAPIService, $stateParams, FlashService) {
     $scope.jobs = JobAPIService.jobs();
     var getJobsSuccess = function(response) {
       $scope.jobs = response;
@@ -21,7 +21,7 @@ app.controller("JobsDeleteController", ["$scope", "JobAPIService", "$stateParams
       }
     };
 
-    $scope.startDelete = function(job) {
+    $scope.deleteJob = function(job) {
       var successCallback = function(response) {
         for (var i=0; i < $scope.jobs.length; i++) {
           var currentJob = $scope.jobs[i];
@@ -30,7 +30,7 @@ app.controller("JobsDeleteController", ["$scope", "JobAPIService", "$stateParams
             break;
           }
         }
-        JobAPIService.setJobs(JobAPIService.getJobs(getJobsSucess, getJobsFailure));
+        JobAPIService.setJobs($scope.jobs);
       };
       var failureCallback = function(response) {
         FlashService.addMessage({message: "Failed to Delete Job", type: "warning"});

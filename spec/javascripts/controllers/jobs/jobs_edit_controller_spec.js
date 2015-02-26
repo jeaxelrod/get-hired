@@ -46,7 +46,7 @@ describe("JobsEditController", function() {
     $httpBackend.flush();
     scope.$digest();
 
-    expect(scope.jobs).toContain(editJob);
+    expect(scope.jobs[0].toJSON()).toEqual(editJob);
   });
 
   it("should handle failed edits of a job", function() {
@@ -63,10 +63,10 @@ describe("JobsEditController", function() {
     scope.editJob(editJob);
     $httpBackend.flush();
     scope.$digest();
-   
     job.linkError = true;
+   
     expect(scope.jobs).not.toContain(editJob);
-    expect(scope.jobs).toContain(job);
+    expect(scope.jobs[0].toJSON()).toEqual(job);
   });
 
 });

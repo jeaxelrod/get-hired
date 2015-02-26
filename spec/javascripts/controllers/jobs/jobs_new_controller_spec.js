@@ -42,7 +42,7 @@ describe("JobsNewController", function() {
     $httpBackend.flush();
     scope.$digest();
 
-    expect(scope.jobs).toContain(newJob);
+    expect(scope.jobs[0].toJSON()).toEqual(newJob);
   });
 
   it("should fail to create a new job if invalid link", function() {
