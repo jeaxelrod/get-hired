@@ -45,7 +45,7 @@ describe("JobsService", function() {
 
     expect(response[0].toJSON()).toEqual(jobs[0]);
     expect(response[1].toJSON()).toEqual(jobs[1]);
-    expect(callbackCalled).toBe(false);
+    expect(callbackCalled).toBe(true);
   });
 
   it("should call failure callback when failing to get all jobs", function() {
