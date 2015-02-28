@@ -1,7 +1,7 @@
 "use strict";
 
 describe("JobsService", function() {
-  var JobsService, $httpBackend, jobs;
+  var JobsService, $httpBackend, jobs, callbackCalled, successCallback, failureCallback;
 
   beforeEach(module("getHired"));
 
@@ -11,6 +11,13 @@ describe("JobsService", function() {
     jobs = [{ id: 1, position: "Position 1", company: "Company 1", link: "http://link1.com" },
             { id: 2, position: "Position 2", company: "Company 2", link: "http://link2.com"}]
 
+    callbackCalled = false;
+    successCallback = function(response) {
+      callbackCalled = true;
+    }
+    failureCallback = function(response) {
+      callbackCalled = true;
+    }
   }));
 
   it("should list all jobs", function() {
@@ -36,11 +43,7 @@ describe("JobsService", function() {
   it("should call success callback when getting all jobs", function() {
     $httpBackend.expectGET("/user/jobs").
       respond(jobs);
-    var callbackCalled = false;
-    var successCallback = function(response) {
-      callbackCalled = true;
-    };
-    var failureCallback = function() {};
+    failureCallback = function() {};
     var response = JobsService.getJobs(successCallback, failureCallback);
     $httpBackend.flush();
 
@@ -52,11 +55,7 @@ describe("JobsService", function() {
   it("should call failure callback when failing to get all jobs", function() {
     $httpBackend.expectGET("/user/jobs").
       respond(400);
-    var callbackCalled = false;
-    var successCallback = function(response) {};
-    var failureCallback = function(response) {
-      callbackCalled = true;
-    };
+    successCallback = function(response) {};
 
     var response = JobsService.getJobs(successCallback, failureCallback);
     $httpBackend.flush();
@@ -89,14 +88,10 @@ describe("JobsService", function() {
   
   it("creates new jobs and calls the success callback", function() {
     var newJob = { position: "Internship", company: "Facebook", link: "http://facebook.com" };
-    var callbackCalled = false;
-    var callback = function(response) {
-      callbackCalled = true;
-    }
     $httpBackend.expectPOST("/user/jobs", {job: newJob}).
       respond(newJob);
 
-    var response = JobsService.createJob(newJob, callback);
+    var response = JobsService.createJob(newJob, successCallback);
     $httpBackend.flush();
 
     expect(response.toJSON()).toEqual(newJob);
@@ -105,11 +100,7 @@ describe("JobsService", function() {
 
   it("fails to create new jobs and calls the failure callback", function() {
     var newJob = { position: "Internship", company: "Facebook", link: "http://facebook.com" };
-    var callbackCalled = false;
-    var successCallback = function(response) {
-    };
-    var failureCallback = function(response) {
-      callbackCalled = true;
+    successCallback = function(response) {
     };
     $httpBackend.expectPOST("/user/jobs", {job: newJob}).
       respond(422, {errors: {link: ["invalid url"]}});
@@ -142,10 +133,6 @@ describe("JobsService", function() {
                     position: "Software Engineer",
                     company:  job.company,
                     link:     job.link }
-    var callbackCalled = false;
-    var successCallback = function(response) {
-      callbackCalled = true;
-    }
       
     $httpBackend.expectPUT("/user/jobs/" + job.id, {job: editJob}).
       respond(editJob);
@@ -178,11 +165,7 @@ describe("JobsService", function() {
                    position: job.position,
                    company:  job.company,
                    link:     "meow" }
-    var callbackCalled = false;
-    var successCallback = function(response) {};
-    var failureCallback = function(response) {
-      callbackCalled = true;
-    };
+    successCallback = function(response) {};
     $httpBackend.expectPUT("/user/jobs/" + job.id, {job: editJob}).
       respond(400, {errors: {link: ["Invalid url" ]}});
 
@@ -207,10 +190,6 @@ describe("JobsService", function() {
 
   it("should delete jobs and call the success callback", function() {
     var job = jobs[0];
-    var callbackCalled = false;
-    var successCallback = function(response) {
-      callbackCalled = true;
-    };
     $httpBackend.expectDELETE("/user/jobs/" + job.id).
       respond(204);
     
@@ -235,11 +214,7 @@ describe("JobsService", function() {
 
   it("should handle failures to delete jobs and call the failure callback", function() {
     var job = jobs[0];
-    var callbackCalled = false;
-    var successCallback = function(response) {};
-    var failureCallback = function(response) {
-      callbackCalled = true;
-    }
+    successCallback = function(response) {};
     $httpBackend.expectDELETE("/user/jobs/" + job.id).
       respond(400, { errors: "Failure to delete job"});
     
