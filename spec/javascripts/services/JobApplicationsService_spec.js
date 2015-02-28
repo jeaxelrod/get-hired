@@ -156,13 +156,13 @@ describe("JobApplicationsService", function() {
     expect(callbackCalled).toBe(true);
   });
 
-  xit("should handle failure when deleting a job application", function() {
+  it("should handle failure when deleting a job application", function() {
     var jobApplication = jobApplications[0];
     $httpBackend.expectDELETE("/user/jobs/" +  jobApplication.job_id + "/job_applications/" + jobApplication.id).
       respond(400);
     successCallback = function() {};
 
-    var response = JobApplicationsService.deleteJobApplication(jobApplication, successCallback);
+    var response = JobApplicationsService.deleteJobApplication(jobApplication, successCallback, failureCallback);
     $httpBackend.flush();
 
     expect(response.$resolved).toBe(true);
