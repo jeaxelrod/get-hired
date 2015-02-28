@@ -40,7 +40,8 @@ describe("JobsService", function() {
     var successCallback = function(response) {
       callbackCalled = true;
     };
-    var response = JobsService.getJobs(successCallback);
+    var failureCallback = function() {};
+    var response = JobsService.getJobs(successCallback, failureCallback);
     $httpBackend.flush();
 
     expect(response[0].toJSON()).toEqual(jobs[0]);
