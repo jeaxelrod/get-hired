@@ -8,10 +8,10 @@ app.factory("JobsService", ['$rootScope', '$resource',
     var Job = $resource('/user/jobs/:id', {id: '@id' }, {'update': { method: 'PUT' }});
     return {
       jobs: function() {
-        return jobs
+        return jobs;
       },
       setJobs: function(newJobs) {
-        jobs = newJobs
+        jobs = newJobs;
       },
       getJobs: function(successCallback, failureCallback) {
         return Job.query(successCallback, failureCallback); 
