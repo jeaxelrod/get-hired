@@ -1,0 +1,25 @@
+<div class="row">
+  <div class="col-md-12 table-responsive">
+    <button ui-sref="newJob" class="btn btn-default">New Job</button>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Position</th>
+          <th>Company</th>
+          <th>Link</th>
+          <th>Date Applied</th>
+          <th>Communication</th>
+          <th>Comments</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="job in jobs" ng-include="jobUrl(job)">
+          <td>{{job.company}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

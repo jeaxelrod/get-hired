@@ -5,5 +5,6 @@
 var getHired = angular.module('getHired', [
   'templates',
   'ui.router',
-  'ngResource'
+  'ngResource',
+  'ui.date'
 ]);

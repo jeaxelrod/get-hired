@@ -12,8 +12,10 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require jquery-ui
 //= require angular/angular
 //= require angular-ui-router
 //= require angular-rails-templates
 //= require angular-resource
+//= require angular-ui-date
 //= require_tree .

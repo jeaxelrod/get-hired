@@ -105,6 +105,19 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
           controller: "NavController"
         }
       }
+    })
+    .state('newJobApplication', {
+      url: "job/:jobId/job_application/new",
+      views: {
+        "": {
+          templateUrl: "job_applications/new.html",
+          controller: "JobApplicationsNewController"
+        },
+        "nav": {
+          templateUrl: "nav/navbar.html",
+          controller: "NavController"
+        }
+      }
     });
 
   $urlRouterProvider.otherwise('/');

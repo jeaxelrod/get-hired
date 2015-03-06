@@ -2,6 +2,8 @@
 <td>{{job.position}}</td>
 <td>{{job.company}}</td>
 <td><a target="_blank" href={{job.link}}>{{job.link.split("http://")[1]}}</a></td>
+<td ng-if="!job.job_applications">
+  <button ui-sref="newJobApplication({jobId: {{job.id}}})" class="btn btn-primary">Apply</button>
 <td>
   <button ui-sref="editJob({jobId: {{job.id}}})"   class="btn">Edit</button>
   <button ui-sref="deleteJob({jobId: {{job.id}}})" class="btn btn-xs btn-link">Delete</button>
