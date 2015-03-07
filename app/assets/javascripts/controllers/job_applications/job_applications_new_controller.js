@@ -6,11 +6,15 @@ app.controller("JobApplicationsNewController", ["$scope", "JobsService", "JobApp
   function($scope, JobsService, JobApplicationsService, $stateParams) {
     var getJobsSuccess = function(response) {
       $scope.jobs = response;
-      for (var i =0; i < $scope.jobs.length; i++) {
-        var job = $scope.jobs[i];
-        job.job_application = JobApplicationsService.getJobApplications({job_id: job.id})[0];
-      }
-      JobsService.setJobs($scope.jobs);
+      JobApplicationsService.setJobApplications(JobApplicationsService.getJobApplications(function(response) {
+        for (var i=0; i < response.length; i++) {
+          var application = response[i];
+          var job = $scope.jobs.filter(function(element) {
+            return element.id == application.job_id;
+          })[0];
+          job.job_application = application;
+        }
+      }));
     };
     var getJobsFailure = function(response) {
       // Handle error to retreive jobs
