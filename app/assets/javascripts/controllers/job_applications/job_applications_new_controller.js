@@ -4,19 +4,25 @@ var app = angular.module("getHired");
 
 app.controller("JobApplicationsNewController", ["$scope", "JobsService", "JobApplicationsService", "$stateParams", "$state",
   function($scope, JobsService, JobApplicationsService, $stateParams, $state) {
+    $scope.jobData = [];
     var getJobsSuccess = function(response) {
       $scope.jobs = response;
+      $scope.jobs.forEach(function(job) {
+        $scope.jobData.push({job: job});
+      });
       JobApplicationsService.setJobApplications(JobApplicationsService.getJobApplications(function(response) {
+        $scope.jobApplications = response;
         for (var i=0; i < response.length; i++) {
           var application = response[i];
           var date = new Date(application.date_applied);
-          application.formatted_date = (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear();
-          var job = $scope.jobs.filter(function(element) {
-            return element.id == application.job_id;
+          var formatted_date = (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear();
+          var tableRow = $scope.jobData.filter(function(element) {
+            return element.job.id === application.job_id;
           })[0];
-          job.job_application = application;
+          tableRow.job_application = application;
+          tableRow.job_application.formatted_date = formatted_date;
         }
-        $scope.jobs.filter(function(element) {
+        $scope.jobData.filter(function(element) {
           return !element.job_application
         }).map(function(element) {
           element.newApp = true;

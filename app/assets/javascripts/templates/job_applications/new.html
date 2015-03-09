@@ -16,8 +16,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr ng-repeat="job in jobs" ng-include="jobUrl(job)">
-          <td>{{job.company}}</td>
+        <tr ng-repeat="row in jobData" ng-include="jobUrl(row.job)">
         </tr>
       </tbody>
     </table>
