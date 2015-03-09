@@ -76,6 +76,18 @@ describe("JobApplicationsNewController", function() {
   });
 
   it("should handle failure when creating a new job application", function() {
+    var newApp = {id: 2, job_id: 2, user_id: 1, date_applied: Date.now(), comments: "Meow", communication: "Cat", status: "denied"};
+    $httpBackend.expectGET("/user/jobs").
+      respond(jobs);
+    $httpBackend.expectGET("/user/job_applications").
+      respond(job_applications);
+    $httpBackend.expectPOST("/user/jobs/job_applications", {job_application: newApp}).
+      respond(400);
+
+    scope.createJobApplication(newApp);
+    $httpBackend.flush();
+    
+    expect(scope.jobs[1].job_application.toJSON()).not.toContain(newJob);
   });
 });
 
