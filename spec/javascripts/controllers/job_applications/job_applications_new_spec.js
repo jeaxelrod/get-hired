@@ -35,6 +35,8 @@ describe("JobApplicationsNewController", function() {
     $httpBackend.flush();
     var job1 = jobs[0];
     var job2 = jobs[1];
+    var date = new Date(job_applications[0].date_applied);
+    job_applications[0].formatted_date = (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear();
     job1.job_application = job_applications[0];
     job2.job_application = job_applications[1];
     

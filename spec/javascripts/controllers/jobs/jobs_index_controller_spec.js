@@ -32,7 +32,9 @@ describe("JobsIndexController", function() {
     $httpBackend.expectGET("/user/job_applications").
       respond(job_applications);
     $httpBackend.flush();
-
+    
+    var date = new Date(job_applications[0].date_applied);
+    job_applications[0].formatted_date = (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear();
     jobs[0].job_application = job_applications[0];
     jobs[1].job_application = job_applications[1];
 
