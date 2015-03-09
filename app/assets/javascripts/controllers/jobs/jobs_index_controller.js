@@ -10,6 +10,7 @@ app.controller("JobsIndexController", ["$scope", "JobsService", "FlashService", 
       JobApplicationsService.setJobApplications(JobApplicationsService.getJobApplications(function(response) {
         for (var i=0; i < response.length; i++) {
           var application = response[i];
+          application.formatted_date = new Date(application.date_applied).toLocaleString().split(",")[0];
           var job = $scope.jobs.filter(function(element) {
             return element.id == application.job_id;
           })[0];

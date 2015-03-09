@@ -2,13 +2,14 @@
 
 var app = angular.module("getHired");
 
-app.controller("JobApplicationsNewController", ["$scope", "JobsService", "JobApplicationsService", "$stateParams",
-  function($scope, JobsService, JobApplicationsService, $stateParams) {
+app.controller("JobApplicationsNewController", ["$scope", "JobsService", "JobApplicationsService", "$stateParams", "$state",
+  function($scope, JobsService, JobApplicationsService, $stateParams, $state) {
     var getJobsSuccess = function(response) {
       $scope.jobs = response;
       JobApplicationsService.setJobApplications(JobApplicationsService.getJobApplications(function(response) {
         for (var i=0; i < response.length; i++) {
           var application = response[i];
+          application.formatted_date = new Date(application.date_applied).toLocaleString().split(",")[0];
           var job = $scope.jobs.filter(function(element) {
             return element.id == application.job_id;
           })[0];
@@ -39,6 +40,7 @@ app.controller("JobApplicationsNewController", ["$scope", "JobsService", "JobApp
         job.job_application = response;
         JobsService.setJobs($scope.jobs);
         JobApplicationsService.setJobApplications(JobApplicationsService.jobApplications().push(response));
+        $state.go("jobs");
       };
       var failure = function(response) {
         //Handle creation of new job appliaction error

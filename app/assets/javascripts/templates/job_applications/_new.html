@@ -1,4 +1,5 @@
 <form name="Job{{job.id}}" novalidate>
+  <input type="hidden" ng-model="job.job_application.job_id" ng-init="job.job_application.job_id = job.id" />
   <th>
     <a ui-sref="jobs" href>
       <span class="glyphicon glyphicon-remove"></span>
@@ -8,9 +9,9 @@
   <td>{{job.company}}</td>
   <td><a target="_blank" href={{job.link}}>{{job.link.split("http://")[1]}}</a></td>
   <td><input ui-date ng-model="job.job_application.date_applied" class="form-control" placeholder="Date Applied"></td>
-  <td><input ng-model="job.job_application.communication" class="form-control" placeholder="Communication"></td>
-  <td><textarea ng-model="job.job_application.comments"      class="form-control" placeholder="Comments"></textarea></td>
-  <td><input ng-model="job.job_application.status"        class="form-control" placeholder="Status"></td>
-  <td><button ng-click="createJobApplication(job)" type=submit" class="btn">Create Application</button></td>
+  <td><input ng-model="job.job_application.communication"        class="form-control" placeholder="Communication"></td>
+  <td><textarea ng-model="job.job_application.comments"          class="form-control" placeholder="Comments"></textarea></td>
+  <td><input ng-model="job.job_application.status"               class="form-control" placeholder="Status"></td>
+  <td><button ng-click="createJobApplication(job.job_application)" type=submit" class="btn">Create Application</button></td>
 </form>
 
