@@ -16,6 +16,11 @@ app.controller("JobApplicationsNewController", ["$scope", "JobsService", "JobApp
           })[0];
           job.job_application = application;
         }
+        $scope.jobs.filter(function(element) {
+          return !element.job_application
+        }).map(function(element) {
+          element.newApp = true;
+        });
       }));
     };
     var getJobsFailure = function(response) {

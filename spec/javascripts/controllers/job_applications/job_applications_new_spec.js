@@ -39,6 +39,7 @@ describe("JobApplicationsNewController", function() {
     job_applications[0].formatted_date = (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear();
     job1.job_application = job_applications[0];
     job2.job_application = job_applications[1];
+    job2.newApp = true;
     
     compareJobs(scope.jobs[0].toJSON(), job1);
     compareJobs(scope.jobs[1].toJSON(), job2);

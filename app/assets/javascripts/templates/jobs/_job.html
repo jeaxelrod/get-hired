@@ -2,15 +2,12 @@
 <td>{{job.position}}</td>
 <td>{{job.company}}</td>
 <td><a target="_blank" href={{job.link}}>{{job.link.split("http://")[1]}}</a></td>
-<div ng-if="job.job_applications">
-  <td>{{job.job_application.formatted_date}}</td>
-  <td>{{job.job_application.communication}}</td>
-  <td>{{job.job_application.comments}}</td>
-  <td>{{job.job_application.status}}</td>
-</div>
-<td ng-if="!job.job_applications">
-  <button ui-sref="newJobApplication({jobId: {{job.id}}})" class="btn btn-primary">Apply</button>
+<td ng-if="job.job_application.id">{{job.job_application.formatted_date}}</td>
+<td ng-if="job.job_application.id">{{job.job_application.communication}}</td>
+<td ng-if="job.job_application.id">{{job.job_application.comments}}</td>
+<td ng-if="job.job_application.id">{{job.job_application.status}}</td>
 <td>
+  <button ng-show="job.newApp" ui-sref="newJobApplication({jobId: {{job.id}}})" class="btn btn-primary">Apply</button>
   <button ui-sref="editJob({jobId: {{job.id}}})"   class="btn">Edit</button>
   <button ui-sref="deleteJob({jobId: {{job.id}}})" class="btn btn-xs btn-link">Delete</button>
 </td>
