@@ -31,8 +31,19 @@ app.controller("JobApplicationsNewController", ["$scope", "JobsService", "JobApp
       }
     };
 
-    $scope.createJobApplication = function(job) {
-      console.log(job);
+    $scope.createJobApplication = function(jobApplication) {
+      var success = function(response) {
+        var job = $scope.jobs.filter(function(element) {
+          return element.id == response.job_id;
+        })[0];
+        job.job_application = response;
+        JobsService.setJobs($scope.jobs);
+        JobApplicationsService.setJobApplications(JobApplicationsService.jobApplications().push(response));
+      };
+      var failure = function(response) {
+        //Handle creation of new job appliaction error
+      };
+      JobApplicationsService.createJobApplication(jobApplication, success, failure);
     };
 
   }

@@ -22,6 +22,8 @@ describe("JobApplicationsNewController", function() {
             { id: 2, position: "Position 2", company: "Company 2", link: "http://link2.com"}]
     job_applications = [{id: 1, job_id: 1, user_id: 1, date_applied: Date.now(), comments: "Some comments", communication: "John Doe", status: "applied"}];
     $httpBackend = _$httpBackend_;
+    JobsService = _JobsService_;
+    JobApplicationsService = _JobApplicationsService_;
     controller = $controller("JobApplicationsNewController", {$scope: scope});
   }));
 
@@ -38,6 +40,10 @@ describe("JobApplicationsNewController", function() {
     
     compareJobs(scope.jobs[0].toJSON(), job1);
     compareJobs(scope.jobs[1].toJSON(), job2);
+    compareJobs(JobsService.jobs()[0].toJSON(), job1);
+    compareJobs(JobsService.jobs()[1].toJSON(), job2);
+    expect(JobApplicationsService.jobApplications().length).toBe(job_applications.length);
+    expect(JobApplicationsService.jobApplications()[0].toJSON()).toEqual(job_applications[0]);
   });
 
   it("should handle failure when retrieving all jobs", function() {
@@ -48,25 +54,26 @@ describe("JobApplicationsNewController", function() {
     expect(scope.jobs).toEqual([]);
   });
 
-  it("should handle failure when failing to retrieve a job application");
-//   $httpBackend.expectGET("/user/jobs").
-//     respond(jobs);
-//   $httpBackend.expectGET("/user/job_applications").
-//     respond(400);
-//   $httpBackend.flush();
+  it("should handle failure when failing to retrieve a job application", function() {
+    $httpBackend.expectGET("/user/jobs").
+      respond(jobs);
+    $httpBackend.expectGET("/user/job_applications").
+      respond(400);
+    $httpBackend.flush();
 
-//   console.log(JSON.stringify(scope.jobs[0]));
-//   expect(false).toBe(true);
-// });
+    expect(scope.jobs[0].toJSON()).toEqual(jobs[0]);
+    expect(scope.jobs[1].toJSON()).toEqual(jobs[1]);
+    expect(JobApplicationsService.jobApplications().length).toBe(0);
+  });
 
   it("should create a new job application", function() {
     var newApp = {id: 2, job_id: 2, user_id: 1, date_applied: Date.now(), comments: "Meow", communication: "Cat", status: "denied"};
     $httpBackend.expectGET("/user/jobs").
       respond(jobs);
+    $httpBackend.expectPOST("/user/jobs/2/job_applications", {job_application: newApp}).
+      respond(newApp);
     $httpBackend.expectGET("/user/job_applications").
       respond(job_applications);
-    $httpBackend.expectPOST("/user/jobs/job_applications", {job_application: newApp}).
-      respond(newApp);
 
     scope.createJobApplication(newApp);
     $httpBackend.flush();
@@ -79,15 +86,15 @@ describe("JobApplicationsNewController", function() {
     var newApp = {id: 2, job_id: 2, user_id: 1, date_applied: Date.now(), comments: "Meow", communication: "Cat", status: "denied"};
     $httpBackend.expectGET("/user/jobs").
       respond(jobs);
+    $httpBackend.expectPOST("/user/jobs/2/job_applications", {job_application: newApp}).
+      respond(400);
     $httpBackend.expectGET("/user/job_applications").
       respond(job_applications);
-    $httpBackend.expectPOST("/user/jobs/job_applications", {job_application: newApp}).
-      respond(400);
 
     scope.createJobApplication(newApp);
     $httpBackend.flush();
     
-    expect(scope.jobs[1].job_application.toJSON()).not.toContain(newJob);
+    expect(scope.jobs[1].job_application).toBe(undefined);
   });
 });
 
