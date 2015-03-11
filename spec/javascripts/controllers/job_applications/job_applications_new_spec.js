@@ -40,7 +40,6 @@ describe("JobApplicationsNewController", function() {
     compareJobs(JobsService.jobs()[1].toJSON(), jobs[1]);
 
     expect(scope.jobApplications[0].toJSON()).toEqual(job_applications[0]);
-    expect(JobApplicationsService.jobApplications().length).toBe(job_applications.length);
     expect(JobApplicationsService.jobApplications()[0].toJSON()).toEqual(job_applications[0]);
   });
 
