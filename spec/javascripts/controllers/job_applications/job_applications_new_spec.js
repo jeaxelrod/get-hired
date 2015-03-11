@@ -33,18 +33,13 @@ describe("JobApplicationsNewController", function() {
     $httpBackend.expectGET("/user/job_applications").
       respond(job_applications);
     $httpBackend.flush();
-    var job1 = jobs[0];
-    var job2 = jobs[1];
-    var date = new Date(job_applications[0].date_applied);
-    job_applications[0].formatted_date = (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear();
-    job1.job_application = job_applications[0];
-    job2.job_application = job_applications[1];
-    job2.newApp = true;
-    
-    compareJobs(scope.jobs[0].toJSON(), job1);
-    compareJobs(scope.jobs[1].toJSON(), job2);
-    compareJobs(JobsService.jobs()[0].toJSON(), job1);
-    compareJobs(JobsService.jobs()[1].toJSON(), job2);
+
+    compareJobs(scope.jobs[0].toJSON(), jobs[0]);
+    compareJobs(scope.jobs[1].toJSON(), jobs[1]);
+    compareJobs(JobsService.jobs()[0].toJSON(), jobs[0]);
+    compareJobs(JobsService.jobs()[1].toJSON(), jobs[1]);
+
+    expect(scope.jobApplications[0].toJSON()).toEqual(job_applications[0]);
     expect(JobApplicationsService.jobApplications().length).toBe(job_applications.length);
     expect(JobApplicationsService.jobApplications()[0].toJSON()).toEqual(job_applications[0]);
   });

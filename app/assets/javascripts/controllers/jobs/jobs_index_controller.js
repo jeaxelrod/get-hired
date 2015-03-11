@@ -20,7 +20,7 @@ app.controller("JobsIndexController", ["$scope", "JobsService", "FlashService", 
           var tableRow = $scope.jobData.filter(function(row) {
             return row.job.id === application.job_id;
           })[0];
-          tableRow.job_application = application;
+          tableRow.job_application = JSON.parse(JSON.stringify(application));
           tableRow.job_application.formatted_date = formatted_date;
         }
         $scope.jobData.filter(function(element) {

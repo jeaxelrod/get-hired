@@ -19,7 +19,7 @@ app.controller("JobApplicationsNewController", ["$scope", "JobsService", "JobApp
           var tableRow = $scope.jobData.filter(function(element) {
             return element.job.id === application.job_id;
           })[0];
-          tableRow.job_application = application;
+          tableRow.job_application = JSON.parse(JSON.stringify(application));
           tableRow.job_application.formatted_date = formatted_date;
         }
         $scope.jobData.filter(function(element) {
