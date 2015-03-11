@@ -12,7 +12,7 @@ describe("JobDataService", function() {
     jobApplications = [{ id:            1, 
                          job_id:        1, 
                          user_id:       1, 
-                         data_applied:  Date.now(), 
+                         date_applied:  Date.now(), 
                          comments:      "Some comments",
                          communication: "Person",
                          status:        "Active" }];
@@ -34,22 +34,21 @@ describe("JobDataService", function() {
     JobDataService.updateJobs(jobs);
 
     expect(JobDataService.jobs()).toEqual(jobs);
+    expect(JobDataService.data()[0].job).toEqual(jobs[0]);
+    expect(JobDataService.data()[1].job).toEqual(jobs[1]);
   });
 
   it("should update a job that already exists", function() {
     var editedJob = { id: 1, position: "Intern", company: "Netflix", link:"http://netflix.com" };
     JobDataService.updateJobs(jobs);
     expect(JobDataService.jobs()).toEqual(jobs);
+    expect(JobDataService.data()[0].job).toEqual(jobs[0]);
+    expect(JobDataService.data()[1].job).toEqual(jobs[1]);
 
-    JobDataService.updateJobs(editedJobs);
+    JobDataService.updateJobs([editedJob]);
     expect(JobDataService.jobs()).toEqual([editedJob, jobs[1]]);
-  });
-
-  it("should mark jobs without a job application", function() {
-    JobDataService.updateJobs(jobs);
-    JobDataService.updateJobApplications(jobApplications);
-
-    expect(JobDataService.data()[1].newApp).toBe(true);
+    expect(JobDataService.data()[0].job).toEqual(editedJob);
+    expect(JobDataService.data()[1].job).toEqual(jobs[1]);
   });
 
   it("should update a job application with initially no job applications", function() {
@@ -59,20 +58,42 @@ describe("JobDataService", function() {
     jobApplications[0].formattedDate = formattedDate;
 
     expect(JobDataService.jobApplications()).toEqual(jobApplications);
+    expect(JobDataService.data()[0].job_application).toEqual(jobApplications[0]);
   });
 
   it("should update a job application that already exists", function() {
     var updatedJobApplication = { id:            1, 
                                   job_id:        1, 
                                   user_id:       1, 
-                                  data_applied:  Date.parse("Dec 25, 2014"), 
-                                  comments:      "Different comments",
                                   communication: "Different Person",
                                   status:        "Passive" };
     JobDataService.updateJobApplications(jobApplications); 
     expect(JobDataService.jobApplications()).toEqual(jobApplications);
+    expect(JobDataService.data()[0].job_application).toEqual(jobApplications[0]);
 
     JobDataService.updateJobApplications([updatedJobApplication]);
-    expect(JobDataService.jobApplications()).toEqual([updatedJobApplication]);
+    var app = jobApplications[0];
+    app.communication = updatedJobApplication.communication;
+    app.status = updatedJobApplication.status;
+    expect(JobDataService.jobApplications()).toEqual(jobApplications);
+    expect(JobDataService.data()[0].job_application).toEqual(jobApplications[0]);
+  });
+
+  it("should properly group jobs and their job applications", function() {
+    JobDataService.updateJobs(jobs);
+    JobDataService.updateJobApplications(jobApplications);
+    var data = JobDataService.data();
+
+    expect(data[0].job.id).toBe(1);
+    expect(data[0].job_application.job_id).toBe(1);
+  });
+
+  it("should properly group jobs and their job applications", function() {
+    JobDataService.updateJobApplications(jobApplications);
+    JobDataService.updateJobs(jobs);
+    var data = JobDataService.data();
+
+    expect(data[0].job.id).toBe(1);
+    expect(data[0].job_application.job_id).toBe(1);
   });
 });
