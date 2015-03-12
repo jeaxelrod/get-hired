@@ -20,15 +20,6 @@ describe("JobsService", function() {
     }
   }));
 
-  it("should list all jobs", function() {
-    expect(JobsService.jobs()).toEqual([]);
-  });
-
-  it("should set jobs", function() {
-    JobsService.setJobs(jobs);
-    expect(JobsService.jobs()).toEqual(jobs);
-  });
-
   it("should retrieve all jobs", function() {
     $httpBackend.expectGET("/user/jobs").
       respond(jobs);

@@ -1,6 +1,6 @@
 "use strict";
 
-describe("JobApplicationsNewController", function() {
+xdescribe("JobApplicationsNewController", function() {
   var scope, controller, $httpBackend, JobsService, JobApplicationsService, jobs, job_applications;
   var compareJobs = function(actualJob, expectedJob) {
     for (var property in actualJob) {

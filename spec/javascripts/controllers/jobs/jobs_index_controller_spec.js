@@ -1,6 +1,6 @@
 "use strict"
 
-describe("JobsIndexController", function() {
+xdescribe("JobsIndexController", function() {
   var scope, controller, $httpBackend, JobsService, JobApplicationsService, jobs, job_applications;
   var compareJobs = function(actualJob, expectedJob) {
     for (var property in actualJob) {

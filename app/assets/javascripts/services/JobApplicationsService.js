@@ -3,18 +3,11 @@
 var app = angular.module("getHired");
 app.factory("JobApplicationsService", ["$resource",
   function($resource) {
-    var jobApplications = [];
     var JobApplication = $resource('/user/jobs/:job_id/job_applications/:id',
                                     {id: '@id', job_id: '@job_id'},
                                     { 'queryAll': {method: 'GET', isArray: true, url: '/user/job_applications'},
                                       'edit':     {method: 'PUT' }});
     return {
-      jobApplications: function() {
-        return jobApplications;
-      },
-      setJobApplications: function(newJobApplications) {
-        jobApplications = newJobApplications;
-      },
       getJobApplications: function(args) {
         if (typeof arguments[0] === "object") {
           var job_id = arguments[0].job_id;

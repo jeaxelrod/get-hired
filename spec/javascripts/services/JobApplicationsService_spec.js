@@ -25,15 +25,6 @@ describe("JobApplicationsService", function() {
       };
   }));
 
-  it("should list all job applications", function() {
-    expect(JobApplicationsService.jobApplications()).toEqual([]); 
-  });
-
-  it("should set all job applications", function() {
-    JobApplicationsService.setJobApplications(jobApplications);
-    expect(JobApplicationsService.jobApplications()).toEqual(jobApplications);
-  });
-
   it("should retrieve all job applications", function() {
     $httpBackend.expectGET("/user/job_applications").
       respond(jobApplications);

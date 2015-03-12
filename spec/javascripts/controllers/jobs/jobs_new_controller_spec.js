@@ -1,6 +1,6 @@
 "use strict";
 
-describe("JobsNewController", function() {
+xdescribe("JobsNewController", function() {
   var scope, controller, $httpBackend, JobsService, jobs;
 
   beforeEach(module('getHired'));

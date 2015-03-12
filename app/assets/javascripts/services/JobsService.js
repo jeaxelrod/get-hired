@@ -4,15 +4,8 @@ var app = angular.module("getHired");
 
 app.factory("JobsService", ['$rootScope', '$resource',
   function($rootScope, $resource) {
-    var jobs = [];
     var Job = $resource('/user/jobs/:id', {id: '@id' }, {'update': { method: 'PUT' }});
     return {
-      jobs: function() {
-        return jobs;
-      },
-      setJobs: function(newJobs) {
-        jobs = newJobs;
-      },
       getJobs: function(successCallback, failureCallback) {
         return Job.query(successCallback, failureCallback); 
       },

@@ -1,6 +1,6 @@
 "use strict";
 
-describe("JobsDeleteController", function() {
+xdescribe("JobsDeleteController", function() {
   var scope, controller, $httpBackend, JobsService, jobs;
 
   beforeEach(module("getHired"));
