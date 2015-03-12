@@ -27,8 +27,11 @@ app.factory("JobDataService", function() {
   };
   var updateJobApplication = function(newApp, oldApp) {
     for (var prop in newApp) {
-      if (newApp.hasOwnProperty(newApp)) {
+      if (newApp.hasOwnProperty(prop)) {
         if (newApp[prop] !== oldApp[prop]) {
+          if (prop === "date_applied") {
+            oldApp.formatted_date = formatDate(newApp.date_applied);
+          }
           oldApp[prop] = newApp[prop];
         }
       }
@@ -51,6 +54,7 @@ app.factory("JobDataService", function() {
     }
   };
   var addJobApplication = function(app) {
+    app.formatted_date = formatDate(app.date_applied);
     var dataElement = data.filter(function(element) {
       if (element.job) {
         return element.job.id === app.job_id;
@@ -66,6 +70,10 @@ app.factory("JobDataService", function() {
     }
   };
         
+  var formatDate = function(milliseconds) {
+    var date = new Date(milliseconds);
+    return (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear();
+  };
   return {
     jobs: function() { 
       return jobs; 
