@@ -1,21 +1,43 @@
 "use strict";
 
 describe("JobDataService", function() {
-  var JobDataService, jobs, jobApplications;
+  var JobDataService, JobsServiceMock, JobApplicationsServiceMock;
+  var jobs = [{ id: 1, position: "Position 1", company: "Company 1", link: "http://link1.com" },
+              { id: 2, position: "Position 2", company: "Company 2", link: "http://link2.com"}]
+  var jobApplications = [{ id:            1, 
+                           job_id:        1, 
+                           user_id:       1, 
+                           date_applied:  Date.now(), 
+                           comments:      "Some comments",
+                           communication: "Person",
+                           status:        "Active" }];
 
   beforeEach(module("getHired"));
 
-  beforeEach(inject(function(_JobDataService_, _$httpBackend_) {
+  beforeEach(function() {
+    JobsServiceMock = {
+      getJobs: function(successCallback, failureCallback) {
+        successCallback(jobs);
+        return jobs;
+      }
+    };
+    JobApplicationsServiceMock = {
+      getJobApplications: function(successCallback, failureCallback) {
+        successCallback(jobApplications);
+        return jobApplications;
+      }
+    };
+    
+    module(function($provide) {
+      $provide.value('JobsService', JobsServiceMock);
+    });
+    module(function($provide) {
+      $provide.value('JobApplicationsService', JobApplicationsServiceMock);
+    });
+  });
+
+  beforeEach(inject(function(_JobDataService_) {
     JobDataService = _JobDataService_;
-    jobs = [{ id: 1, position: "Position 1", company: "Company 1", link: "http://link1.com" },
-            { id: 2, position: "Position 2", company: "Company 2", link: "http://link2.com"}]
-    jobApplications = [{ id:            1, 
-                         job_id:        1, 
-                         user_id:       1, 
-                         date_applied:  Date.now(), 
-                         comments:      "Some comments",
-                         communication: "Person",
-                         status:        "Active" }];
   }));
 
   it("should list all jobs", function() {
@@ -102,5 +124,70 @@ describe("JobDataService", function() {
 
     expect(data[0].job.id).toBe(1);
     expect(data[0].job_application.job_id).toBe(1);
+  });
+
+  it("should fetch jobs from API with initially no jobs", function() {
+    JobDataService.refreshJobs();
+
+    expect(JobDataService.jobs()).toEqual(jobs);
+  });
+
+  it("should fetch jobs from API and update list of current jobs", function() {
+    var oldJobs = [{ id:       1,
+                     position: "Old Position 1",
+                     company:  "Old Company 1",
+                     link:     "http://oldlink1.com" },
+                   { id:       3, 
+                     position: "Position 3",
+                     company:  "Company 3", 
+                     link:     "https://link3.com" }];
+    JobDataService.updateJobs(oldJobs);
+    expect(JobDataService.jobs()).toEqual(oldJobs);
+
+    JobDataService.refreshJobs();
+    expect(JobDataService.jobs()).toEqual([jobs[0], jobs[1], oldJobs[2]]);
+  });
+
+  it("should fetch jobs and be a promise", function() {
+    var callBackCalled = false;
+    callBack = function() {
+      callBackCalled = true;
+    };
+    expect(callBackCalled).toBe(false);
+
+    JobDataService.refreshJobs().then(callBack);
+    expect(callBackCalled).toBe(true);
+  });
+  
+  it("should fetch job applications from API with initially no job applications", function() {
+    JobDataService.refreshJobApplications();
+
+    expect(JobDataService.jobApplications()).toEqual(jobApplications);
+  });
+  
+  it("should fetch job applications from API and update list of current Job Applications", function() {
+    var oldJobApplications = [{  id:            1, 
+                                  job_id:        1, 
+                                  user_id:       1, 
+                                  date_applied:  Date.parse("Dec 25, 2014"),
+                                  comments:      "Old Comments",
+                                  contacts:      "Old contacts",
+                                  status:        "Passive" }];
+    JobDataService.updateJobs(oldJobApplications);
+    expect(JobDataService.jobApplications()).toEqual(oldJobApplications);
+
+    JobDataService.refreshJobApplications();
+    expect(JobDataService.jobApplications()).toEqual(jobApplications);
+  });
+
+  it("should fetch job applications and be a promise", function() {
+    var callBackCalled = false;
+    callBack = function() {
+      callBackCalled = true;
+    };
+    expect(callBackCalled).toBe(false);
+
+    JobDataService.refreshJobs().then(callBack);
+    expect(callBackCalled).toBe(true);
   });
 });
