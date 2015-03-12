@@ -18,4 +18,6 @@
 //= require angular-rails-templates
 //= require angular-resource
 //= require angular-ui-date
+//= require lodash
+//= require restangular
 //= require_tree .

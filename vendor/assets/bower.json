@@ -6,6 +6,7 @@
     "angular-ui-router": "latest",
     "angular-resource": "latest",
     "bootstrap-sass-official": "latest",
-    "angular-ui-date": "latest"
+    "angular-ui-date": "latest",
+    "restangular": "latest"
   }
 }
