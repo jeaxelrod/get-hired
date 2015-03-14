@@ -2,8 +2,8 @@
 
 var app = angular.module("getHired");
 
-app.factory("JobsService", ['$rootScope', 'Restangular',
-  function($rootScope, Restangular) {
+app.factory("JobsService", ['Restangular',
+  function(Restangular) {
     var Job = Restangular.all('user/jobs');
     return {
       getJobs: function() {

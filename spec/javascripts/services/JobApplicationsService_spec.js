@@ -1,8 +1,14 @@
 "use strict";
 
 describe("JobApplicationsService", function() {
-  var JobApplicationsService, JobsService, $httpBackend, jobApplications, callbackCalled, successCallback, failureCallback;
-
+  var JobApplicationsService, JobsService, $httpBackend, jobApplications, setResponse, emptyCallback, response;
+  var compareJobApplications = function(newApp, oldApp) {
+    var props = ["id", "job_id", "user_id", "data_applied", "comments", "communication", "status"];
+    for (var i=0; i < props.length; i++) {
+      var prop = props[i];
+      expect(newApp[prop]).toEqual(oldApp[prop]);
+    }
+  };
   beforeEach(module("getHired"));
 
   beforeEach(inject(function(_JobApplicationsService_,  _JobsService_, _$httpBackend_) {
@@ -16,12 +22,11 @@ describe("JobApplicationsService", function() {
                          comments:      "Some comments",
                          communication: "Person",
                          status:        "Active" }];
-      callbackCalled = false;
-      successCallback = function(response) {
-        callbackCalled = true;
+      response = undefined;
+      setResponse = function(data) {
+        response = data;
       };
-      failureCallback = function(response) {
-        callbackCalled = true;
+      emptyCallback = function(data) {
       };
   }));
 
@@ -29,22 +34,10 @@ describe("JobApplicationsService", function() {
     $httpBackend.expectGET("/user/job_applications").
       respond(jobApplications);
 
-    var response = JobApplicationsService.getJobApplications(successCallback);
+    JobApplicationsService.getJobApplications().then(setResponse);
     $httpBackend.flush();
 
-    expect(response[0].toJSON()).toEqual(jobApplications[0]);
-    expect(callbackCalled).toBe(true);
-  });
-
-  it("should handle failure to retrieve all job applications", function() {
-    $httpBackend.expectGET("/user/job_applications").
-      respond(400);
-    successCallback = function() {};
-
-    var response = JobApplicationsService.getJobApplications(successCallback, failureCallback);
-    $httpBackend.flush();
-    
-    expect(callbackCalled).toBe(true);
+    compareJobApplications(response[0], jobApplications[0]);
   });
 
   it("should retrieve all job applications for a job", function() {
@@ -52,23 +45,21 @@ describe("JobApplicationsService", function() {
     $httpBackend.expectGET("/user/jobs/" + job_id + "/job_applications").
       respond(jobApplications);
 
-    var response = JobApplicationsService.getJobApplications({ job_id: job_id }, successCallback);
+    JobApplicationsService.getJobApplications({ job_id: job_id }).then(setResponse);
     $httpBackend.flush();
-
-    expect(response[0].toJSON()).toEqual(jobApplications[0]);
-    expect(callbackCalled).toBe(true);
+    
+    compareJobApplications(response[0], jobApplications[0]);
   });
 
   it("should handle failure to retrieve all job applications for a job", function() {
     var job_id = jobApplications[0].job_id;
     $httpBackend.expectGET("/user/jobs/" + job_id + "/job_applications").
       respond(400);
-    successCallback = function() {};
 
-    var response = JobApplicationsService.getJobApplications({ job_id: job_id }, successCallback, failureCallback);
+    JobApplicationsService.getJobApplications({ job_id: job_id }).then(emptyCallback, setResponse);
     $httpBackend.flush();
 
-    expect(callbackCalled).toBe(true);
+    expect(response.status).toBe(400);
   });
 
   it("should create new job applications", function() {
@@ -76,24 +67,21 @@ describe("JobApplicationsService", function() {
     $httpBackend.expectPOST("/user/jobs/" + newJobApplication.job_id + "/job_applications", {job_application: newJobApplication}).
       respond(newJobApplication);
 
-    var response = JobApplicationsService.createJobApplication(newJobApplication, successCallback);
+    JobApplicationsService.createJobApplication(newJobApplication).then(setResponse);
     $httpBackend.flush();
 
-    expect(response.toJSON()).toEqual(newJobApplication);
-    expect(callbackCalled).toBe(true);
+    compareJobApplications(response, newJobApplication);
   });
 
   it("should handle failure when creating new job applications", function() {
     var newJobApplication = jobApplications[0];
     $httpBackend.expectPOST("/user/jobs/" + newJobApplication.job_id + "/job_applications", {job_application: newJobApplication}).
       respond(400);
-    successCallback = function() {};
 
-    var response = JobApplicationsService.createJobApplication( newJobApplication, successCallback, failureCallback);
+    JobApplicationsService.createJobApplication(newJobApplication).then(emptyCallback, setResponse);
     $httpBackend.flush()
 
-    expect(response.job_application).toEqual(newJobApplication);
-    expect(callbackCalled).toBe(true);
+    expect(response.status).toEqual(400);
   });
 
   it("should should edit a job application", function() {
@@ -108,11 +96,10 @@ describe("JobApplicationsService", function() {
     $httpBackend.expectPUT("/user/jobs/" + jobApplication.job_id + "/job_applications/" + jobApplication.id, {job_application: editJobApplication}).
       respond(editJobApplication);
 
-    var response = JobApplicationsService.editJobApplication(editJobApplication, successCallback);
+    JobApplicationsService.editJobApplication(editJobApplication).then(setResponse);
     $httpBackend.flush();
 
-    expect(response.toJSON()).toEqual(editJobApplication);
-    expect(callbackCalled).toBe(true);
+    compareJobApplications(response, editJobApplication);
   });
 
   it("should handle failure when editing a job application", function() {
@@ -126,37 +113,37 @@ describe("JobApplicationsService", function() {
                                 status:        "Denied" }
     $httpBackend.expectPUT("/user/jobs/" + jobApplication.job_id + "/job_applications/" + jobApplication.id, {job_application: editJobApplication}).
       respond(400);
-    successCallback = function() {};
     
-    var response = JobApplicationsService.editJobApplication(editJobApplication, successCallback, failureCallback);
+    JobApplicationsService.editJobApplication(editJobApplication).then(emptyCallback, setResponse);
     $httpBackend.flush();
 
-    expect(response.job_application).toEqual(editJobApplication);
-    expect(callbackCalled).toBe(true);
+    expect(response.status).toEqual(400);
   });
 
   it("should should delete a job application", function() {
     var jobApplication = jobApplications[0];
     $httpBackend.expectDELETE("/user/jobs/" +  jobApplication.job_id + "/job_applications/" + jobApplication.id).
       respond(204);
+    var jobApplicationDeleted = false;
+    setResponse = function(data) {
+      jobApplicationDeleted = true; 
+    };
 
-    var response = JobApplicationsService.deleteJobApplication(jobApplication, successCallback);
+    expect(jobApplicationDeleted).toBe(false);
+    JobApplicationsService.deleteJobApplication(jobApplication).then(setResponse);
     $httpBackend.flush();
 
-    expect(response.$resolved).toBe(true);
-    expect(callbackCalled).toBe(true);
+    expect(jobApplicationDeleted).toBe(true);
   });
 
   it("should handle failure when deleting a job application", function() {
     var jobApplication = jobApplications[0];
     $httpBackend.expectDELETE("/user/jobs/" +  jobApplication.job_id + "/job_applications/" + jobApplication.id).
       respond(400);
-    successCallback = function() {};
 
-    var response = JobApplicationsService.deleteJobApplication(jobApplication, successCallback, failureCallback);
+    JobApplicationsService.deleteJobApplication(jobApplication).then(emptyCallback, setResponse);
     $httpBackend.flush();
 
-    expect(response.$resolved).toBe(true);
-    expect(callbackCalled).toBe(true);
+    expect(response.status).toBe(400);
   });
 });
