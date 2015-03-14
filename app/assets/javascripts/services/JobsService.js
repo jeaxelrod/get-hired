@@ -2,21 +2,21 @@
 
 var app = angular.module("getHired");
 
-app.factory("JobsService", ['$rootScope', '$resource',
-  function($rootScope, $resource) {
-    var Job = $resource('/user/jobs/:id', {id: '@id' }, {'update': { method: 'PUT' }});
+app.factory("JobsService", ['$rootScope', 'Restangular',
+  function($rootScope, Restangular) {
+    var Job = Restangular.all('user/jobs');
     return {
-      getJobs: function(successCallback, failureCallback) {
-        return Job.query(successCallback, failureCallback); 
+      getJobs: function() {
+        return Job.getList();
       },
-      createJob: function(job, successCallback, failureCallback) {
-        return Job.save({id: ""}, {job: job}, successCallback, failureCallback);
+      createJob: function(newJob) {
+        return Job.post({job: newJob}); 
       },
-      editJob: function(job, successCallback, failureCallback) {
-        return Job.update({id: job.id }, {job: job}, successCallback, failureCallback);
+      editJob: function(editJob) {
+        return Job.customPUT({job: editJob}, editJob.id); 
       },
-      deleteJob: function(job, successCallback, failureCallback) {
-        return Job.delete({id: job. id}, successCallback, failureCallback);
+      deleteJob: function(job) {
+        return Job.customDELETE(job.id);
       }
     };
   }
