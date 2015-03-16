@@ -1,7 +1,7 @@
 <th>{{$index + 1}}</th>
 <td>{{row.job.position}}</td>
 <td>{{row.job.company}}</td>
-<td><a target="_blank" href={{row.job.link}}>{{row.job.link.split("http://")[1]}}</a></td>
+<td><a target="_blank" href={{row.job.link}}>{{row.job.link | link}}</a></td>
 <td ng-if="row.job_application.id">{{row.job_application.formatted_date}}</td>
 <td ng-if="row.job_application.id">{{row.job_application.communication}}</td>
 <td ng-if="row.job_application.id">{{row.job_application.comments}}</td>
