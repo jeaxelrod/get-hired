@@ -65,6 +65,9 @@ app.factory("JobDataService", ['JobsService', 'JobApplicationsService', '$q',
 
       }
       jobs.push(job);
+      jobs.sort(function(a, b) {
+        return b.id - a.id;
+      });
     };
     var addJobApplication = function(app) {
       app.formatted_date = formatDate(app.date_applied);
@@ -81,6 +84,9 @@ app.factory("JobDataService", ['JobsService', 'JobApplicationsService', '$q',
         data.push({job_application: app});
       }
       jobApplications.push(app);
+      jobApplications.sort(function(a, b) {
+        return b.id - a.id;
+      });
     };
 
     var updateJobs = function(newJobs) {

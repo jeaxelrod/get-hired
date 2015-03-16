@@ -24,8 +24,8 @@ describe("JobsNewController", function() {
     $httpBackend = _$httpBackend_;
     JobsService = _JobsService_;
     JobDataService = _JobDataService_;
-    jobs = [{ id: 1, position: "Position 1", company: "Company 1", link: "http://link1.com" },
-                { id: 2, position: "Position 2", company: "Company 2", link: "http://link2.com"}];
+    jobs = [{ id: 2, position: "Position 2", company: "Company 2", link: "http://link2.com" },
+            { id: 1, position: "Position 1", company: "Company 1", link: "http://link1.com" }];
     jobApplications = [{id: 1, job_id: 1, user_id: 1, date_applied: Date.now(), comments: "Some comments", communication: "John Doe", status: "applied"}];
     controller = $controller("JobsNewController", { $scope: scope });
   }));
@@ -42,7 +42,7 @@ describe("JobsNewController", function() {
     compareJobs(JobDataService.jobs()[0], jobs[0]);
     compareJobs(JobDataService.jobs()[1], jobs[1]);
 
-    compareJobApplications(scope.jobData[0].job_application, jobApplications[0]);
+    compareJobApplications(scope.jobData[1].job_application, jobApplications[0]);
     compareJobApplications(JobDataService.jobApplications()[0], jobApplications[0]);
   });
 
@@ -87,10 +87,10 @@ describe("JobsNewController", function() {
     $httpBackend.flush();
     scope.$digest();
 
-    compareJobs(scope.jobData[0].job, jobs[0]);
-    compareJobs(JobDataService.jobs()[0], jobs[0]);
-    compareJobs(scope.jobData[2].job, newJob);
-    compareJobs(JobDataService.jobs()[2], newJob);
+    compareJobs(scope.jobData[0].job, newJob);
+    compareJobs(JobDataService.jobs()[0], newJob);
+    compareJobs(scope.jobData[1].job, jobs[0]);
+    compareJobs(JobDataService.jobs()[1], jobs[0]);
   });
 
   it("should fail to create a new job if invalid link", function() {

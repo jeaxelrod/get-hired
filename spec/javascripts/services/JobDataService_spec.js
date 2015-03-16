@@ -5,8 +5,8 @@ describe("JobDataService", function() {
   beforeEach(module("getHired"));
 
   beforeEach(function() {
-    jobs = [{ id: 1, position: "Position 1", company: "Company 1", link: "http://link1.com" },
-            { id: 2, position: "Position 2", company: "Company 2", link: "http://link2.com"}];
+    jobs = [{ id: 2, position: "Position 2", company: "Company 2", link: "http://link2.com" },
+            { id: 1, position: "Position 1", company: "Company 1", link: "http://link1.com" }];
     jobApplications = [{ id:            1, 
                          job_id:        1, 
                          user_id:       1, 
@@ -77,11 +77,11 @@ describe("JobDataService", function() {
     expect(JobDataService.data()[1].job).toEqual(jobs[1]);
 
     var clonedEditedJob = JSON.parse(JSON.stringify(editedJob));
-    clonedEditedJob.position = jobs[0].position;
+    clonedEditedJob.position = jobs[1].position;
     JobDataService.updateJobs([editedJob]);
-    expect(JobDataService.jobs()).toEqual([clonedEditedJob, jobs[1]]);
-    expect(JobDataService.data()[0].job).toEqual(clonedEditedJob);
-    expect(JobDataService.data()[1].job).toEqual(jobs[1]);
+    expect(JobDataService.jobs()).toEqual([jobs[0], clonedEditedJob]);
+    expect(JobDataService.data()[1].job).toEqual(clonedEditedJob);
+    expect(JobDataService.data()[0].job).toEqual(jobs[0]);
   });
 
   it("should update a job application with initially no job applications", function() {
@@ -120,8 +120,8 @@ describe("JobDataService", function() {
     JobDataService.updateJobApplications(jobApplications);
     var data = JobDataService.data();
 
-    expect(data[0].job.id).toBe(1);
-    expect(data[0].job_application.job_id).toBe(1);
+    expect(data[1].job.id).toBe(1);
+    expect(data[1].job_application.job_id).toBe(1);
     expect(JobDataService.jobs()).toEqual(jobs);
     expect(JobDataService.jobApplications()).toEqual(jobApplications);
   });
@@ -132,8 +132,8 @@ describe("JobDataService", function() {
     var data = JobDataService.data();
     var jobsData = JobDataService.jobs();
 
-    expect(data[0].job.id).toBe(1);
-    expect(data[0].job_application.job_id).toBe(1);
+    expect(data[1].job.id).toBe(1);
+    expect(data[1].job_application.job_id).toBe(1);
     expect(JobDataService.jobs()).toEqual(jobs);
     expect(JobDataService.jobApplications()).toEqual(jobApplications);
   });
@@ -147,21 +147,22 @@ describe("JobDataService", function() {
   });
 
   it("should fetch jobs from API and update list of current jobs", function() {
-    var oldJobs = [{ id:       1,
-                     position: "Old Position 1",
-                     company:  "Old Company 1",
-                     link:     "http://oldlink1.com" },
-                   { id:       3, 
+    var oldJobs = [{ id:       3, 
                      position: "Position 3",
                      company:  "Company 3", 
-                     link:     "https://link3.com" }];
+                     link:     "https://link3.com" },
+                   { id:       1,
+                     position: "Old Position 1",
+                     company:  "Old Company 1",
+                     link:     "http://oldlink1.com" }
+                   ];
     JobDataService.updateJobs(oldJobs);
     expect(JobDataService.jobs()).toEqual(oldJobs);
 
     JobDataService.refreshJobs();
     $timeout.flush();
 
-    expect(JobDataService.jobs()).toEqual([jobs[0], oldJobs[1], jobs[1]]);
+    expect(JobDataService.jobs()).toEqual([oldJobs[0], jobs[0], jobs[1]]);
   });
 
   it("should fetch jobs and be a promise", function() {

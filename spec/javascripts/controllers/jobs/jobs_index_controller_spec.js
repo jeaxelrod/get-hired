@@ -23,8 +23,8 @@ describe("JobsIndexController", function() {
     scope = $rootScope.$new();
     $httpBackend = _$httpBackend_;
     JobDataService = _JobDataService_;
-    jobs = [{ id: 1, position: "Position 1", company: "Company 1", link: "http://link1.com" },
-                { id: 2, position: "Position 2", company: "Company 2", link: "http://link2.com"}]
+    jobs = [{ id: 2, position: "Position 2", company: "Company 2", link: "http://link2.com" }, 
+            { id: 1, position: "Position 1", company: "Company 1", link: "http://link1.com" }]
     jobApplications = [{id: 1, job_id: 1, user_id: 1, date_applied: Date.now(), comments: "Some comments", communication: "John Doe", status: "applied"}];
 
     controller = $controller("JobsIndexController", { $scope: scope});
@@ -42,7 +42,7 @@ describe("JobsIndexController", function() {
     compareJobs(JobDataService.jobs()[0], jobs[0]);
     compareJobs(JobDataService.jobs()[1], jobs[1]);
 
-    compareJobApplications(scope.jobData[0].job_application, jobApplications[0]);
+    compareJobApplications(scope.jobData[1].job_application, jobApplications[0]);
     compareJobApplications(JobDataService.jobApplications()[0], jobApplications[0]);
   });
 
