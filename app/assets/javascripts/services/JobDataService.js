@@ -51,8 +51,8 @@ app.factory("JobDataService", ['JobsService', 'JobApplicationsService', '$q',
         dataElement.job = job;
       } else {
         data.push({job: job});
-        jobs.push(job);
       }
+      jobs.push(job);
     };
     var addJobApplication = function(app) {
       app.formatted_date = formatDate(app.date_applied);
@@ -67,8 +67,8 @@ app.factory("JobDataService", ['JobsService', 'JobApplicationsService', '$q',
         dataElement.job_application = app;
       } else {
         data.push({job_application: app});
-        jobApplications.push(app);
       }
+      jobApplications.push(app);
     };
 
     var updateJobs = function(newJobs) {

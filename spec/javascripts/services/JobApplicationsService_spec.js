@@ -3,7 +3,7 @@
 describe("JobApplicationsService", function() {
   var JobApplicationsService, JobsService, $httpBackend, jobApplications, setResponse, emptyCallback, response;
   var compareJobApplications = function(newApp, oldApp) {
-    var props = ["id", "job_id", "user_id", "data_applied", "comments", "communication", "status"];
+    var props = ["id", "job_id", "user_id", "date_applied", "comments", "communication", "status"];
     for (var i=0; i < props.length; i++) {
       var prop = props[i];
       expect(newApp[prop]).toEqual(oldApp[prop]);

@@ -122,15 +122,20 @@ describe("JobDataService", function() {
 
     expect(data[0].job.id).toBe(1);
     expect(data[0].job_application.job_id).toBe(1);
+    expect(JobDataService.jobs()).toEqual(jobs);
+    expect(JobDataService.jobApplications()).toEqual(jobApplications);
   });
 
   it("should properly group jobs and their job applications", function() {
     JobDataService.updateJobApplications(jobApplications);
     JobDataService.updateJobs(jobs);
     var data = JobDataService.data();
+    var jobsData = JobDataService.jobs();
 
     expect(data[0].job.id).toBe(1);
     expect(data[0].job_application.job_id).toBe(1);
+    expect(JobDataService.jobs()).toEqual(jobs);
+    expect(JobDataService.jobApplications()).toEqual(jobApplications);
   });
 
   it("should fetch jobs from API with initially no jobs", function() {
