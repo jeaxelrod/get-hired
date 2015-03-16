@@ -7,7 +7,7 @@
 <td ng-if="row.job_application.id">{{row.job_application.comments}}</td>
 <td ng-if="row.job_application.id">{{row.job_application.status}}</td>
 <td>
-  <button ng-show="!row.job_application.id" ui-sref="newJobApplication({jobId: {{row.job.id}}})" class="btn btn-primary">Apply</button>
+  <button ng-show="!row.job_application.id" ui-sref="newJobApplication({jobId: row.job.id})" class="btn btn-primary">Apply</button>
   <button ui-sref="editJob({jobId: row.job.id})"   class="btn">Edit</button>
   <button ui-sref="deleteJob({jobId: row.job.id})" class="btn btn-xs btn-link">Delete</button>
 </td>

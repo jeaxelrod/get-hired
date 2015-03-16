@@ -2,17 +2,14 @@
 
 var app = angular.module("getHired");
 
-app.controller("JobsNewController", ["$scope", "JobsService", "$state",
-  function($scope, JobsService, $state) {
-    var getJobsSuccess = function(response) {
-      $scope.jobs = response;
+app.controller("JobsNewController", ["$scope", "$state", "JobsService", "JobDataService",
+  function($scope, $state, JobsService, JobDataService) {
+    var updateJobData = function() {
+      $scope.jobData = JobDataService.data();
     };
-    var getJobsFailure = function(response) {
-      // Handle error to retreive jobs
-    };
-
-    $scope.jobs = JobsService.jobs();
-    JobsService.setJobs(JobsService.getJobs(getJobsSuccess, getJobsFailure));
+    updateJobData();
+    JobDataService.refreshJobs().then(updateJobData);
+    JobDataService.refreshJobApplications().then(updateJobData);
 
     var createNewJobsHelpers = function() {
       var counter = 0;
@@ -50,14 +47,15 @@ app.controller("JobsNewController", ["$scope", "JobsService", "$state",
         if (index != -1) {
           $scope.newJobsList.splice(index, 1); 
         }
-        JobsService.setJobs($scope.jobs.unshift(response));
+        JobDataService.updateJobs([response]);
+        $scope.jobData = JobDataService.data();
       }
       var failureCallback = function(response) {
         if (response.data.errors.link) {
           job.linkError = true;
         }
       }
-      JobsService.createJob(job, successCallback, failureCallback);
+      JobsService.createJob(job).then(successCallback, failureCallback);
     };
   }
 ]);
