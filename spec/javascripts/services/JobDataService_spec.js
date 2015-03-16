@@ -1,7 +1,7 @@
 "use strict";
 
 describe("JobDataService", function() {
-  var JobDataService, JobsServiceMock, JobApplicationsServiceMock, jobs, jobApplications;
+  var JobDataService, JobsServiceMock, JobApplicationsServiceMock, jobs, jobApplications, $q, $timeout;
   beforeEach(module("getHired"));
 
   beforeEach(function() {
@@ -15,15 +15,21 @@ describe("JobDataService", function() {
                          communication: "Person",
                          status:        "Active" }];
     JobsServiceMock = {
-      getJobs: function(successCallback, failureCallback) {
-        successCallback(jobs);
-        return jobs;
+      getJobs: function() {
+        return $q(function(resolve, reject) {
+          $timeout(function() {
+            resolve(jobs);
+          }, 100);
+        });
       }
     };
     JobApplicationsServiceMock = {
-      getJobApplications: function(successCallback, failureCallback) {
-        successCallback(jobApplications);
-        return jobApplications;
+      getJobApplications: function() {
+        return $q(function(resolve, reject) {
+          $timeout(function() {
+            resolve(jobApplications);
+          }, 100);
+        });
       }
     };
     
@@ -35,8 +41,10 @@ describe("JobDataService", function() {
     });
   });
 
-  beforeEach(inject(function(_JobDataService_) {
+  beforeEach(inject(function(_JobDataService_, _$q_, _$timeout_) {
     JobDataService = _JobDataService_;
+    $q = _$q_;
+    $timeout = _$timeout_;
   }));
 
   it("should list all jobs", function() {
@@ -128,6 +136,8 @@ describe("JobDataService", function() {
   it("should fetch jobs from API with initially no jobs", function() {
     JobDataService.refreshJobs();
 
+    $timeout.flush();
+
     expect(JobDataService.jobs()).toEqual(jobs);
   });
 
@@ -144,23 +154,29 @@ describe("JobDataService", function() {
     expect(JobDataService.jobs()).toEqual(oldJobs);
 
     JobDataService.refreshJobs();
+    $timeout.flush();
+
     expect(JobDataService.jobs()).toEqual([jobs[0], oldJobs[1], jobs[1]]);
   });
 
-  xit("should fetch jobs and be a promise", function() {
-    var callBackCalled = false;
-    var callBack = function(response) {
-      console.log("hi");
-      callBackCalled = true;
+  it("should fetch jobs and be a promise", function() {
+    var callbackCalled = false;
+    var callback = function(response) {
+      callbackCalled = true;
     };
-    expect(callBackCalled).toBe(false);
+    var emptyCallback = function(response) {
+    };
+    expect(callbackCalled).toBe(false);
 
-    JobDataService.refreshJobs().then(callBack, callBack);
-    expect(callBackCalled).toBe(true);
+    JobDataService.refreshJobs().then(callback, emptyCallback);
+    $timeout.flush();
+
+    expect(callbackCalled).toBe(true);
   });
   
   it("should fetch job applications from API with initially no job applications", function() {
     JobDataService.refreshJobApplications();
+    $timeout.flush();
 
     expect(JobDataService.jobApplications()).toEqual(jobApplications);
   });
@@ -180,17 +196,21 @@ describe("JobDataService", function() {
     jobApplications[0].formatted_date = formattedDate;
 
     JobDataService.refreshJobApplications();
+    $timeout.flush();
+
     expect(JobDataService.jobApplications()).toEqual(jobApplications);
   });
 
-  xit("should fetch job applications and be a promise", function() {
+  it("should fetch job applications and be a promise", function() {
     var callBackCalled = false;
     var callBack = function() {
       callBackCalled = true;
     };
     expect(callBackCalled).toBe(false);
 
-    JobDataService.refreshJobs().then(callBack);
+    JobDataService.refreshJobApplications().then(callBack);
+    $timeout.flush();
+
     expect(callBackCalled).toBe(true);
   });
 });

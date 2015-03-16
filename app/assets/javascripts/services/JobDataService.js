@@ -109,13 +109,23 @@ app.factory("JobDataService", ['JobsService', 'JobApplicationsService', '$q',
       updateJobs: updateJobs,
       updateJobApplications: updateJobApplications,
       refreshJobs: function() {
-        JobsService.getJobs(function(response) {
-          updateJobs(response);
+        return $q(function(resolve, reject) {
+          JobsService.getJobs().then(function(response) {
+            updateJobs(response);
+            resolve(response);
+          }, function(response) {
+            reject(response)
+          });
         });
       },
       refreshJobApplications: function() {
-        JobApplicationsService.getJobApplications(function(response) {
-          updateJobApplications(response);
+        return $q(function(resolve, reject) {
+          JobApplicationsService.getJobApplications().then(function(response) {
+            updateJobApplications(response);
+            resolve(response);
+          }, function(response) {
+            reject(response) 
+          });
         });
       }
     };
