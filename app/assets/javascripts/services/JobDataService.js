@@ -51,6 +51,18 @@ app.factory("JobDataService", ['JobsService', 'JobApplicationsService', '$q',
         dataElement.job = job;
       } else {
         data.push({job: job});
+        data.sort(function(a, b) {
+          if (a.job && b.job) {
+            return b.job.id - a.job.id;
+          } else if (a.job) {
+            return -1;
+          } else if (b.job) {
+            return 1;
+          } else {
+            return 0;
+          }
+        });
+
       }
       jobs.push(job);
     };
