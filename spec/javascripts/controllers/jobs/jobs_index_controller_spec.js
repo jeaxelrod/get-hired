@@ -2,6 +2,7 @@
 
 describe("JobsIndexController", function() {
   var scope, controller, $httpBackend, JobDataService, jobs, jobApplications;
+
   var compareJobs = function(actualJob, expectedJob) {
     var props = ["id", "position", "company", "link"];
     for (var i=0; i< props.length; i++) {

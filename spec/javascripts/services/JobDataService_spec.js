@@ -219,4 +219,19 @@ describe("JobDataService", function() {
 
     expect(callBackCalled).toBe(true);
   });
+
+  it("should delete jobs", function() {
+    JobDataService.updateJobs(jobs);
+    JobDataService.updateJobApplications(jobApplications);
+
+    expect(JobDataService.jobs().length).toBe(2);
+    expect(JobDataService.data().length).toBe(2);
+    expect(JobDataService.jobApplications().length).toBe(1);
+
+    JobDataService.deleteJob(1);
+
+    expect(JobDataService.jobs().length).toBe(1);
+    expect(JobDataService.data().length).toBe(1);
+    expect(JobDataService.jobApplications().length).toBe(0);
+  });
 });

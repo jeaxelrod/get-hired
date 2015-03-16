@@ -126,6 +126,31 @@ app.factory("JobDataService", ['JobsService', 'JobApplicationsService', '$q',
       },
       updateJobs: updateJobs,
       updateJobApplications: updateJobApplications,
+      deleteJob: function(job) {
+        var jobsIndex, dataIndex, appsIndex;
+        jobs.some(function(element, index) {
+          if (element.id === job.id) {
+            jobsIndex = index;
+            return true;
+          };
+        });
+        data.some(function(element, index) {
+          if (element.job && job.id === element.job.id) {
+            dataIndex = index;
+            return true;
+          }
+        });
+        jobApplications.some(function(element, index) {
+          if (element.job_id === job.id) {
+            appsIndex = index;
+            return true;
+          }
+        });
+
+        jobs.splice(jobsIndex, 1);
+        data.splice(dataIndex, 1);
+        jobApplications.splice(appsIndex, 1);
+      },
       refreshJobs: function() {
         return $q(function(resolve, reject) {
           JobsService.getJobs().then(function(response) {
