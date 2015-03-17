@@ -44,6 +44,15 @@ app.controller('NavController', ['$scope', 'AuthService', '$state',
       $scope.setLinks($scope.isLoggedIn);
       $scope.user = AuthService.currentUser;
     }
+
+    $scope.activeLink = function(href, uriState) {
+      if (href === "jobs") {
+        if (uriState.toLowerCase().indexOf("job") > -1) {
+          return true;
+        }
+      }
+      return href === uriState;
+    };
     $scope.$watch( AuthService.isLoggedIn, function(newValue, oldValue) {
       if (typeof newValue !== 'undefined' && newValue !== oldValue) {
         $scope.isLoggedIn = newValue;

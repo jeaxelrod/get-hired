@@ -11,7 +11,7 @@
     </div>
     <div class="collapse navbar-collapse" id="navbar-collapse">
       <ul ng-repeat="link in leftLinks" class="nav navbar-nav">
-        <li ng-class="{active: link.href === state }"><a ui-sref={{link.href}}>{{link.title}}</a></li>
+        <li ng-class="{active: activeLink(link.href, state) }"><a ui-sref={{link.href}}>{{link.title}}</a></li>
       </ul>
       <ul ng-repeat="link in rightLinks" class="nav navbar-nav navbar-right">
         <li ng-class="{active: link.href === state }"><a ui-sref={{link.href}}>{{link.title}}</a></li>
