@@ -33,7 +33,16 @@ app.controller("JobsDeleteController", ["$scope", "JobsService", "$stateParams",
       var successCallback = function(response) {
         JobDataService.deleteJob(job.id);  
         updateJobData();
-        $state.go("jobs");
+        var indexDeletedRow;
+        var foundRow = $scope.jobData.some(function(element, index) {
+          if (element.job.id == job.id) {
+            indexDeletedRow =  index;
+            return true;
+          }
+        })[0];
+        if (foundRow) {
+          $scope.jobData.splice(indexDeletedRow, 1);
+        };
       };
       var failureCallback = function(response) {
         FlashService.addMessage({message: "Failed to Delete Job", type: "warning"});
