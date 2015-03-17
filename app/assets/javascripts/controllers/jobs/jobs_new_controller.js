@@ -2,8 +2,8 @@
 
 var app = angular.module("getHired");
 
-app.controller("JobsNewController", ["$scope", "$state", "JobsService", "JobDataService", "JobApplicationsService",
-  function($scope, $state, JobsService, JobDataService, JobApplicationsService) {
+app.controller("JobsNewController", ["$scope", "$state", "JobsService", "JobDataService", "JobApplicationsService", "FlashService",
+  function($scope, $state, JobsService, JobDataService, JobApplicationsService, FlashService) {
     var updateJobData = function() {
       $scope.jobData = JobDataService.data();
     };
@@ -56,6 +56,9 @@ app.controller("JobsNewController", ["$scope", "$state", "JobsService", "JobData
           return "label label-warning";
       }
     };
+    $scope.setTodaysDate = function() {
+      return new Date();
+    };
 
     $scope.createJob = function(job) {
       var successCallback = function(response) {
@@ -86,6 +89,8 @@ app.controller("JobsNewController", ["$scope", "$state", "JobsService", "JobData
           }
           JobDataService.updateJobApplications([response]);
           updateJobData();
+        }, function(response) {
+          FlashMessage.addMessage({message: "Failed to create Job Application", type: "warning"});
         });
       };
 

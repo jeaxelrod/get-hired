@@ -2,8 +2,8 @@
 
 var app = angular.module("getHired");
 
-app.controller("JobApplicationsNewController", ["$scope", "JobApplicationsService", "$stateParams", "$state", "JobDataService",
-  function($scope, JobApplicationsService, $stateParams, $state, JobDataService) {
+app.controller("JobApplicationsNewController", ["$scope", "JobApplicationsService", "$stateParams", "$state", "JobDataService", "FlashService",
+  function($scope, JobApplicationsService, $stateParams, $state, JobDataService, FlashService) {
     var updateJobData = function() {
       $scope.jobData = JobDataService.data();
     };
@@ -29,8 +29,7 @@ app.controller("JobApplicationsNewController", ["$scope", "JobApplicationsServic
       }
     };
     $scope.setTodaysDate = function() {
-      var date = new Date();
-      return (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear();
+      return new Date(); 
     };
 
     $scope.createJobApplication = function(jobApplication) {
@@ -40,7 +39,7 @@ app.controller("JobApplicationsNewController", ["$scope", "JobApplicationsServic
         $state.go("jobs");
       };
       var failure = function(response) {
-        //Handle creation of new job appliaction error
+        FlashMessage.addMessage({message: "Failed to create Job Application", type: "warning"});
       };
       JobApplicationsService.createJobApplication(jobApplication).then(success, failure);
     };
