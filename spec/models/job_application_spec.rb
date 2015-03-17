@@ -26,5 +26,16 @@ RSpec.describe JobApplication, :type => :model do
     app.user = nil
     expect(app).to_not be_valid
   end
+
+  it "deletes when its job deletes" do
+    app = FactoryGirl.create(:job_application)
+    job = app.job
+    expect(job.job_applications.length).to eq(1)
+
+    Job.destroy(job.id)
+
+    expect(Job.where(id: job.id)).to be_empty 
+    expect(JobApplication.where(id: app.id)).to be_empty 
+  end
 end
 
