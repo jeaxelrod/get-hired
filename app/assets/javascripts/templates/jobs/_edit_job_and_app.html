@@ -1,0 +1,19 @@
+<th><a ui-sref="jobs" ><span class="glyphicon glyphicon-remove"></span></a></th>
+<td><input ng-model="row.job.position" class="form-control" placeholder="Position"></td>
+<td><input ng-model="row.job.company"  class="form-control" placeholder="Company"></td>
+<td>
+  <div class="alert alert-warning" ng-show="row.linkError">Url is Invalid <small>(Please include http:// or https://)</small></div>
+  <input ng-model="row.job.link"     class="form-control" placeholder="Link">
+</td>
+  <td><input ui-date ng-model="row.job_application.date_applied" class="form-control" placeholder="Date Applied"></td>
+  <td><input ng-model="row.job_application.communication"        class="form-control" placeholder="Communication"></td>
+  <td><textarea ng-model="row.job_application.comments"          class="form-control" placeholder="Comments"></textarea></td>
+  <td>
+    <select ng-model="row.job_application.status"                class="form-control" placeholder="Status">
+      <option>Applied</option>
+      <option>Interviewing</option>
+      <option>Denied</option>
+    </select>
+   </td>
+<td><button ng-click="editJobAndApp(row.job, row.job_application)" class="btn btn-primary">Edit Job</button></td>
+

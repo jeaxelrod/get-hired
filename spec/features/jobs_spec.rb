@@ -6,7 +6,7 @@ RSpec.feature "Jobs", :type => :feature, js: true do
 
   scenario "Index page displays job info" do
     user = FactoryGirl.create(:user)
-    job = FactoryGirl.create(:job, user: user)
+    job  = FactoryGirl.create(:job, user: user)
     login_as(user, :scope => :user)
 
     visit root_path
@@ -123,7 +123,7 @@ RSpec.feature "Jobs", :type => :feature, js: true do
 
   scenario "Editing a job" do
     user = FactoryGirl.create(:user)
-    job = FactoryGirl.create(:job, user: user)
+    job  = FactoryGirl.create(:job, user: user)
     login_as(user, :scope => :user)
 
     visit root_path
@@ -137,6 +137,29 @@ RSpec.feature "Jobs", :type => :feature, js: true do
 
     expect(page).to_not have_field("Link")
     expect(page).to have_content("Cat Sitter")
+  end
+
+  scenario "Editing a Job and Job Application" do
+    user = FactoryGirl.create(:user)
+    job  = FactoryGirl.create(:job, user: user)
+    app  = FactoryGirl.create(:job_application, job: job, user: user)
+    login_as(user, :scope => :user)
+
+    visit root_path
+    click_link "Jobs"
+
+    click_button "Edit"
+    expect(page).to have_field("Link")
+    expect(page).to have_field("Communication")
+
+    fill_in "Position", with: "Cat Sitter"
+    fill_in "Comments", with: "3 Baby kitties"
+    click_button "Edit Job"
+
+    expect(page).to_not have_field("Link")
+    expect(page).to_not have_field("Communication")
+    expect(page).to have_content("Cat Sitter")
+    expect(page).to have_content("3 Baby kitties")
   end
 
   scenario "Canceling an edit jobs request" do
@@ -157,7 +180,7 @@ RSpec.feature "Jobs", :type => :feature, js: true do
 
   scenario "Failing to edit a job" do
     user = FactoryGirl.create(:user)
-    job = FactoryGirl.create(:job, user: user)
+    job  = FactoryGirl.create(:job, user: user)
     login_as(user, :scope => :user)
 
     visit root_path
@@ -173,7 +196,7 @@ RSpec.feature "Jobs", :type => :feature, js: true do
 
   scenario "Deleting a job" do
     user = FactoryGirl.create(:user)
-    job = FactoryGirl.create(:job, user: user)
+    job  = FactoryGirl.create(:job, user: user)
     login_as(user, :scope => :user)
 
     visit root_path

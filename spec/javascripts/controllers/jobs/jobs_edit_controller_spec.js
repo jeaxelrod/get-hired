@@ -121,5 +121,44 @@ describe("JobsEditController", function() {
     compareJobs(scope.jobData[0].job, jobs[0]);
     expect(scope.jobData[0].linkError).toBe(true);
   });
+  
+  it("should edit a job and job application", function() {
+    var job = jobs[1]; 
+    var editJob = { id:       job.id,  
+                    position: "Software Engineer", 
+                    company:  job.company, 
+                    link:     job.link };
+    var app = jobApplications[0];
+    var editApp = { id:            app.id,
+                    user_id:       app.user_id,
+                    job_id:        app.job_id,
+                    date_applied:   app.date_applied,
+                    comments:      "New Comments",
+                    communication: app.communication,
+                    status:        "Interviewing" };
 
+    $httpBackend.expectGET("/user/jobs").
+      respond(jobs);
+    $httpBackend.expectGET("/user/job_applications").
+      respond(jobApplications);
+    $httpBackend.flush();
+
+    compareJobs(scope.jobData[1].job,     jobs[1]);
+    compareJobs(JobDataService.jobs()[1], jobs[1]);
+    compareJobApplications(scope.jobData[1].job_application, jobApplications[0]);
+    compareJobApplications(JobDataService.jobApplications()[0], jobApplications[0]);
+
+    $httpBackend.expectPUT("/user/jobs/1", {job: editJob}).
+      respond(editJob);
+    $httpBackend.expectPUT("/user/jobs/1/job_applications/1", {job_application: editApp}).
+      respond(editApp);
+    scope.editJobAndApp(editJob, editApp);
+    $httpBackend.flush();
+    scope.$digest();
+
+    compareJobs(scope.jobData[1].job,     editJob);
+    compareJobs(JobDataService.jobs()[1], editJob); 
+    compareJobApplications(scope.jobData[1].job_application, editApp); 
+    compareJobApplications(JobDataService.jobApplications()[0], editApp); 
+  });
 });
