@@ -40,6 +40,16 @@ app.controller("JobsNewController", ["$scope", "$state", "JobsService", "JobData
 
     $scope.jobUrl = "jobs/_job.html";
     $scope.newJobUrl = "jobs/_new_job.html"
+    $scope.statusClass = function(status) {
+      switch(status) {
+        case "Applied":
+          return "label label-primary";
+        case "Interviewing":
+          return "label label-info";
+        case "Denied":
+          return "label label-warning";
+      }
+    };
 
     $scope.createJob = function(job) {
       var successCallback = function(response) {

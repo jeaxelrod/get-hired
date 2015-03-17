@@ -23,8 +23,7 @@ RSpec.feature "Job Applications", :type => :feature, js: true do
     user = FactoryGirl.create(:user)
     job = FactoryGirl.create(:job, user: user)
     login_as(user, :scope => :user)
-    new_app = { date:          "3/09/2015", 
-                communication: "Some person",
+    new_app = { communication: "Some person",
                 comments:      "Laurem ipsum",
                 status:        "Applied" }
 
@@ -36,7 +35,6 @@ RSpec.feature "Job Applications", :type => :feature, js: true do
     page.find(".ui-datepicker-today").click
     fill_in "Communication", with: new_app[:communication]
     fill_in "Comments",      with: new_app[:comments]
-    fill_in "Status",        with: new_app[:status] 
     click_button "Create Application"
 
     expect(user.job_applications.length).to eq(1)
@@ -46,7 +44,7 @@ RSpec.feature "Job Applications", :type => :feature, js: true do
     expect(page).to have_content new_app[:status]
   end
 
-  scenario "Cancelling a request to create a new job applications" do
+  scenario "Canceling a request to create a new job applications" do
     user = FactoryGirl.create(:user)
     job = FactoryGirl.create(:job, user: user)
     login_as(user, :scope => :user)

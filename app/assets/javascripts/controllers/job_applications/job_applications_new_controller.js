@@ -18,6 +18,20 @@ app.controller("JobApplicationsNewController", ["$scope", "JobApplicationsServic
         return "jobs/_job.html"
       }
     };
+    $scope.statusClass = function(status) {
+      switch(status) {
+        case "Applied":
+          return "label label-primary";
+        case "Interviewing":
+          return "label label-info";
+        case "Denied":
+          return "label label-warning";
+      }
+    };
+    $scope.setTodaysDate = function() {
+      var date = new Date();
+      return (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear();
+    };
 
     $scope.createJobApplication = function(jobApplication) {
       var success = function(response) {

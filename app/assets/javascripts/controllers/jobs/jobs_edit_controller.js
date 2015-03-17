@@ -38,6 +38,15 @@ app.controller("JobsEditController", ["$scope", "$stateParams", "JobsService", "
         return "jobs/_job.html"
       }
     };
-
+    $scope.statusClass = function(status) {
+      switch(status) {
+        case "Applied":
+          return "label label-primary";
+        case "Interviewing":
+          return "label label-info";
+        case "Denied":
+          return "label label-warning";
+      }
+    };
   }
 ]);

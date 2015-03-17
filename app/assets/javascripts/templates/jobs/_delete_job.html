@@ -5,7 +5,7 @@
 <td ng-if="row.job_application.id">{{row.job_application.formatted_date}}</td>
 <td ng-if="row.job_application.id">{{row.job_application.communication}}</td>
 <td ng-if="row.job_application.id">{{row.job_application.comments}}</td>
-<td ng-if="row.job_application.id">{{row.job_application.status}}</td>
+<td ng-if="row.job_application.id"><span ng-class="statusClass(row.job_application.status)">{{row.job_application.status}}</span></td>
 <td>
   <div class="panel panel-default">
     <div class="panel-body text-center">
