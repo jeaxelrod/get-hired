@@ -95,6 +95,7 @@ describe("JobsNewController", function() {
 
   it("should fail to create a new job if invalid link", function() {
     var newJob = { position: "Internship", company: "Facebook", link: "facebook.com" };
+
     $httpBackend.expectGET("/user/jobs").
       respond(jobs);
     $httpBackend.expectGET("/user/job_applications").
@@ -103,6 +104,51 @@ describe("JobsNewController", function() {
       respond(422, {errors: {link: ["invalid url"]}});
 
     scope.createJob(newJob);
+    $httpBackend.flush();
+
+    expect(newJob.linkError).toBe(true);
+    expect(scope.jobData.length).toBe(2);
+  });
+
+  it("should create new job and its job application", function() {
+    var newJob = { id: 3, position: "Internship", company: "Facebook", link: "http://facebook.com" }
+    var newApp = { id: 2, date_applied: Date.now(), comments: "Applied online", communication: "meow", status: "Denied" };
+
+    $httpBackend.expectGET("/user/jobs").
+      respond(jobs);
+    $httpBackend.expectGET("/user/job_applications").
+      respond(jobApplications);
+    $httpBackend.flush();
+
+    expect(scope.jobData.length).toBe(2);
+
+    $httpBackend.expectPOST("/user/jobs", {job: newJob}).
+      respond(newJob);
+    $httpBackend.expectPOST("/user/jobs/3/job_applications", {job_application: newApp}).
+      respond(newApp);
+
+    scope.createJobAndApp(newJob, newApp);
+    $httpBackend.flush();
+
+    expect(scope.jobData.length).toBe(3);
+    compareJobs(scope.jobData[0].job, newJob);
+    compareJobs(JobDataService.jobs()[0], newJob);
+
+    compareJobApplications(scope.jobData[0].job_application, newApp);
+    compareJobApplications(JobDataService.jobApplications()[0], newApp);
+  });
+
+  it("should fail to create a new job and job application if invalid link", function() {
+    var newJob = { id: 3, position: "Internship", company: "Facebook", link: "facebook.com" }
+    var newApp = { id: 2, job_id: 3, date_applied: Date.now(), comments: "Applied online", communication: "meow", status: "Denied" };
+    $httpBackend.expectGET("/user/jobs").
+      respond(jobs);
+    $httpBackend.expectGET("/user/job_applications").
+      respond(jobApplications);
+    $httpBackend.expectPOST("/user/jobs", {job: newJob}).
+      respond(422, {errors: {link: ["invalid url"]}});
+
+    scope.createJobAndApp(newJob, newApp);
     $httpBackend.flush();
 
     expect(newJob.linkError).toBe(true);

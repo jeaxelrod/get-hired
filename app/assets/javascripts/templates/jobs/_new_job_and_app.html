@@ -1,0 +1,30 @@
+<form name="Job{{job.id}}" novalidate>
+  <th>
+    <a ng-click="newJobs.delete(job)" href>
+      <span class="glyphicon glyphicon-remove"></span>
+    </a>
+  </th>
+  <td><input ng-model="job.position" class="form-control" placeholder="Position"></td>
+  <td><input ng-model="job.company"  class="form-control" placeholder="Company"></td>
+  <td>
+    <div class="alert alert-warning" ng-show="job.linkError">
+      Url is Invalid <small>(Please include http:// or https://)</small>
+    </div>
+    <input ng-model="job.link" class="form-control" placeholder="Link">
+  </td>
+  <td><input ui-date ng-model="job.newApp.date_applied" class="form-control" placeholder="Date Applied" ng-init="job.newApp.date_applied = setTodaysDate()"></td>
+  <td><input ng-model="job.newApp.communication"        class="form-control" placeholder="Communication"></td>
+  <td><textarea ng-model="job.newApp.comments"          class="form-control" placeholder="Comments"></textarea></td>
+  <td>
+    <select ng-model="job.newApp.status"                class="form-control" placeholder="Status" ng-init="job.newApp.status = 'Applied'">
+      <option>Applied</option>
+      <option>Interviewing</option>
+      <option>Denied</option>
+    </select>
+   </td>
+  <td>
+    <button ng-click="createJobAndApp(job, job.newApp)" type=submit" class="btn btn-primary">Create Job</button>
+    <button ng-click="job.newApp = undefined" class="btn btn-link">Cancel App</button>
+  </td>
+</form>
+

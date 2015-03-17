@@ -12,6 +12,9 @@
     </div>
     <input ng-model="job.link" class="form-control" placeholder="Link">
   </td>
-  <td><button ng-click="createJob(job)" type=submit" class="btn">Create Job</button></td>
+  <td>
+    <button ng-click="createJob(job)" type=submit" class="btn btn-primary">Create Job</button>
+    <button ng-click="job.newApp = {}" class="btn btn">Apply</button>
+  </td>
 </form>
 

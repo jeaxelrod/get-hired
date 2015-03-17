@@ -2,8 +2,8 @@
 
 var app = angular.module("getHired");
 
-app.controller("JobsNewController", ["$scope", "$state", "JobsService", "JobDataService",
-  function($scope, $state, JobsService, JobDataService) {
+app.controller("JobsNewController", ["$scope", "$state", "JobsService", "JobDataService", "JobApplicationsService",
+  function($scope, $state, JobsService, JobDataService, JobApplicationsService) {
     var updateJobData = function() {
       $scope.jobData = JobDataService.data();
     };
@@ -39,7 +39,13 @@ app.controller("JobsNewController", ["$scope", "$state", "JobsService", "JobData
     $scope.newJobs.add();
 
     $scope.jobUrl = "jobs/_job.html";
-    $scope.newJobUrl = "jobs/_new_job.html"
+    $scope.newJobUrl = function(job) {
+      if (job.newApp) {
+        return "jobs/_new_job_and_app.html"
+      } else {
+        return "jobs/_new_job.html"
+      }
+    };
     $scope.statusClass = function(status) {
       switch(status) {
         case "Applied":
@@ -58,7 +64,7 @@ app.controller("JobsNewController", ["$scope", "$state", "JobsService", "JobData
           $scope.newJobsList.splice(index, 1); 
         }
         JobDataService.updateJobs([response]);
-        $scope.jobData = JobDataService.data();
+        updateJobData();
       }
       var failureCallback = function(response) {
         if (response.data.errors.link) {
@@ -66,6 +72,28 @@ app.controller("JobsNewController", ["$scope", "$state", "JobsService", "JobData
         }
       }
       JobsService.createJob(job).then(successCallback, failureCallback);
+    };
+
+    $scope.createJobAndApp = function(newJob, newApp) {
+      var createJobApplication = function(response) {
+        JobDataService.updateJobs([response]);
+        updateJobData();
+        newApp.job_id = response.id;
+        JobApplicationsService.createJobApplication(newApp).then(function(response) {
+          var index = $scope.newJobsList.indexOf(newJob);
+          if (index != -1) {
+            $scope.newJobsList.splice(index, 1);
+          }
+          JobDataService.updateJobApplications([response]);
+          updateJobData();
+        });
+      };
+
+      JobsService.createJob(newJob).then(createJobApplication, function(response) {
+        if (response.data.errors.link) {
+          newJob.linkError = true;
+        }
+      });
     };
   }
 ]);
