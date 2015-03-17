@@ -31,8 +31,6 @@ RSpec.feature "Job Applications", :type => :feature, js: true do
     click_link "Jobs"
     click_button "Apply"
 
-    page.find("input.hasDatepicker").click
-    page.find(".ui-datepicker-today").click
     fill_in "Communication", with: new_app[:communication]
     fill_in "Comments",      with: new_app[:comments]
     click_button "Create Application"

@@ -58,8 +58,6 @@ RSpec.feature "Jobs", :type => :feature, js: true do
     fill_in "Position", with: "Internship"
     fill_in "Company", with: "Facebook"
     fill_in "Link", with: "http://facebook.com"
-    page.find("input.hasDatepicker").click
-    page.find(".ui-datepicker-today").click
     fill_in "Communication", with: new_app[:communication]
     fill_in "Comments",      with: new_app[:comments]
     click_button "Create Job"
