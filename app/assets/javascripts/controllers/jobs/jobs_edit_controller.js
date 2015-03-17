@@ -2,42 +2,33 @@
 
 var app = angular.module("getHired");
 
-app.controller("JobsEditController", ["$scope", "$stateParams", "JobsService", "$state",
-  function($scope, $stateParams, JobsService, $state) {
-    var getJobsSuccess = function(response) {
-      $scope.jobs = response;
+app.controller("JobsEditController", ["$scope", "$stateParams", "JobsService", "$state", "JobDataService",
+  function($scope, $stateParams, JobsService, $state, JobDataService) {
+    var updateJobData = function() {
+      $scope.jobData = JobDataService.data();
     };
-    var getJobsFailure = function(response) {
-      // Handle error to retrieve jobs
-    }
-    
-    $scope.jobs = JobsService.jobs();
-    JobsService.setJobs(JobsService.getJobs(getJobsSuccess, getJobsFailure));
+    updateJobData();
+    JobDataService.refreshJobs().then(updateJobData);
+    JobDataService.refreshJobApplications().then(updateJobData);
 
     $scope.editJob = function(job) {
+      var editedJob = { id: job.id, position: job.position, company: job.company, link: job.link }; 
       var successCallback = function(response) {
-        for (var i=0; i < $scope.jobs.length; i++) {
-          var currentJob = $scope.jobs[i];
-          if (currentJob.id === job.id) {
-            $scope.jobs[i] = response;
-            break;
-          }
-        }
-        JobsService.setJobs($scope.jobs);
+        JobDataService.updateJobs([response]);
         $state.go("jobs");
       };
       var failureCallback = function(response) {
         if (response.data.errors.link) {
-          for (var i=0; i< $scope.jobs.length; i++) {
-            var currentJob = $scope.jobs[i];
-            if (currentJob.id === job.id) {
+          for (var i=0; i< $scope.jobData.length; i++) {
+            var currentJob = $scope.jobData[i];
+            if (currentJob.job.id === job.id) {
               currentJob.linkError = true;
             }
           }
         }
       };
 
-      JobsService.editJob(job, successCallback, failureCallback);
+      JobsService.editJob(editedJob).then(successCallback, failureCallback);
     };
 
     $scope.jobUrl = function(job) {

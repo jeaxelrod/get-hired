@@ -8,8 +8,8 @@ app.controller("JobsIndexController", ["$scope", "FlashService", "JobDataService
       $scope.jobData = JobDataService.data();
     };
     updateJobData();
-    JobDataService.refreshJobs().then(updateJobData());
-    JobDataService.refreshJobApplications().then(updateJobData());
+    JobDataService.refreshJobs().then(updateJobData);
+    JobDataService.refreshJobApplications().then(updateJobData);
 
     $scope.jobUrl = "jobs/_job.html"; 
   }

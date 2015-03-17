@@ -8,12 +8,15 @@
           <th>Position</th>
           <th>Company</th>
           <th>Link</th>
+          <th>Date Applied</th>
+          <th>Contacts</th>
+          <th>Comments</th>
+          <th>Status</th>
           <th></th>
         </tr>
       </thead>
       <tbody>
-        <tr ng-repeat="job in jobs" ng-include="jobUrl(job)">
-          <td>{{job.company}}</td>
+        <tr ng-repeat="row in jobData" ng-include="jobUrl(row.job)">
         </tr>
       </tbody>
     </table>

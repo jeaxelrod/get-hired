@@ -2,8 +2,8 @@
 
 var app = angular.module("getHired");
 
-app.controller("JobsDeleteController", ["$scope", "JobsService", "$stateParams", "FlashService", "JobDataService", 
-  function($scope, JobsService, $stateParams, FlashService, JobDataService) {
+app.controller("JobsDeleteController", ["$scope", "JobsService", "$stateParams", "$state", "FlashService", "JobDataService", 
+  function($scope, JobsService, $stateParams, $state, FlashService, JobDataService) {
     var updateJobData = function() {
       $scope.jobData = JobDataService.data();
     };
@@ -23,6 +23,7 @@ app.controller("JobsDeleteController", ["$scope", "JobsService", "$stateParams",
       var successCallback = function(response) {
         JobDataService.deleteJob(job.id);  
         updateJobData();
+        $state.go("jobs");
       };
       var failureCallback = function(response) {
         FlashService.addMessage({message: "Failed to Delete Job", type: "warning"});
