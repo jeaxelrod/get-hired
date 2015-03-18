@@ -7,6 +7,7 @@ class User < ActiveRecord::Base
   validates_confirmation_of :password
 
   has_many :jobs
-  has_many :job_applications, through: :jobs
+  has_many :job_applications
+  has_many :contacts
   has_many :job_queues
 end
