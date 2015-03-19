@@ -12,15 +12,11 @@ class JobApplicationsController < ApplicationController
 
   def index
     begin
-      respond_with current_user.jobs.find(params[:job_id]).job_applications
-    rescue ActiveRecord::RecordNotFound => e
-      render :status => 400, json: { error: "No Job Applications found" }
-    end
-  end
-
-  def user_index
-    begin
-      respond_with current_user.job_applications
+      if params[:job_id]
+        respond_with current_user.jobs.find(params[:job_id]).job_applications
+      else
+        respond_with current_user.job_applications
+      end
     rescue ActiveRecord::RecordNotFound => e
       render :status => 400, json: { error: "No Job Applications found" }
     end

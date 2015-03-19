@@ -8,9 +8,13 @@ Rails.application.routes.draw do
   scope "/user" do
     resources :jobs, defaults: { format: 'json' } do
       resources :job_applications, defaults: { format: 'json' }
+      resources :contacts, only: [:index], defaults: { format: 'json' } 
     end
 
-    get "/job_applications", to: "job_applications#user_index", defaults: { format: 'json' }
+    resources :contacts, defaults: { format: 'json' }
+    resources :job_applications, only: [:index], defaults: { format: 'json' } do
+      resources :contacts, only: [:index], defaults: { format: 'json' }
+    end
   end
 
   root 'home#index'
