@@ -1,15 +1,18 @@
 require 'rails_helper'
 
 RSpec.describe Job, :type => :model do
+  
+  before(:each) do
+    @job = FactoryGirl.create(:job)
+  end
 
   it "has a valid factory" do
-    expect(FactoryGirl.create(:job)).to be_valid
+    expect(@job).to be_valid
   end
 
   it "is invalid without belonging to a user" do
-    job = FactoryGirl.create(:job)
-    job.user = nil
-    expect(job).to_not be_valid
+    @job.user = nil
+    expect(@job).to_not be_valid
   end
 
   it "can belong to pendings" do
@@ -19,22 +22,18 @@ RSpec.describe Job, :type => :model do
   end
 
   it "belongs to the proper user" do
-    expect(FactoryGirl.create(:job).user).to be_valid
+    expect(@job.user).to be_valid
   end
   
   it "has many job_applications" do
-    job = FactoryGirl.create(:job)
-    FactoryGirl.create_list(:job_application, 5, job: job)
-    expect(job.job_applications.length).to eql(5)
-    job.job_applications.each do |app|
+    FactoryGirl.create_list(:job_application, 5, job: @job)
+    expect(@job.job_applications.length).to eql(5)
+    @job.job_applications.each do |app|
       expect(app).to be_valid
     end
   end
 
   describe "link" do
-    before(:each) do
-      @job = FactoryGirl.create(:job)
-    end
     context "valid links" do
       it "should be valid with HTTP" do
         @job.link = "http://m.co"
