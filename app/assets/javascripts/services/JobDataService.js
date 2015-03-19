@@ -170,6 +170,11 @@ app.factory("JobDataService", ['JobsService', 'JobApplicationsService', '$q',
             reject(response) 
           });
         });
+      },
+      resetData: function() {
+        jobs = [];
+        jobApplications = [];
+        data = [];
       }
     };
   }

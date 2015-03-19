@@ -234,4 +234,19 @@ describe("JobDataService", function() {
     expect(JobDataService.data().length).toBe(1);
     expect(JobDataService.jobApplications().length).toBe(0);
   });
+
+  it("should reset all data", function() {
+    JobDataService.updateJobs(jobs);
+    JobDataService.updateJobApplications(jobApplications);
+
+    expect(JobDataService.jobs().length).toBe(2)
+    expect(JobDataService.data().length).toBe(2);
+    expect(JobDataService.jobApplications().length).toBe(1);
+
+    JobDataService.resetData();
+
+    expect(JobDataService.jobs().length).toBe(0);
+    expect(JobDataService.data().length).toBe(0);
+    expect(JobDataService.jobApplications().length).toBe(0);
+  });
 });
