@@ -1,7 +1,7 @@
 "use strict";
 
 describe("ContactsService", function() {
-  var ContactsService, $httpBackend, setResponse, emptyCallback, response;
+  var ContactsService, $httpBackend, setResponse, emptyCallback, response, contacts;
   var compareContacts = function(actual, expected) {
     var props = ["id", "user_id", "job_id", "job_application_id", "first_name", "last_name", "email", "phone_number"];
     for (var i=0; i<props.length; i++) {
@@ -55,9 +55,9 @@ describe("ContactsService", function() {
 
   it("should retrieve all contacts for a job", function() {
     $httpBackend.expectGET("/user/jobs/1/contacts").
-      respond(contacts[0]);
+      respond([contacts[0]]);
 
-    ContactService.getContacts({job_id: contacts[0].job_id}).then(setResponse);
+    ContactsService.getContacts({job_id: contacts[0].job_id}).then(setResponse);
     $httpBackend.flush();
 
     compareContacts(response[0], contacts[0]);
@@ -65,9 +65,9 @@ describe("ContactsService", function() {
 
   it("should retrieve all contacts for a job application", function() {
     $httpBackend.expectGET("/user/job_applications/1/contacts").
-      respond(contacts[0]);
+      respond([contacts[0]]);
 
-    ContactService.getContacts({job_application_id: contacts[0].job_application_id}).then(setResponse);
+    ContactsService.getContacts({job_application_id: contacts[0].job_application_id}).then(setResponse);
     $httpBackend.flush();
 
     compareContacts(response[0], contacts[0]);
@@ -84,7 +84,7 @@ describe("ContactsService", function() {
   });
 
   it("should create new contacts", function() {
-    newContact = contacts[0];
+    var newContact = contacts[0];
     $httpBackend.expectPOST("/user/contacts", {contact: newContact}).
       respond(newContact);
 
@@ -95,14 +95,14 @@ describe("ContactsService", function() {
   });
 
   it("should handle failure to create new contacts", function() {
-    newContact = contacts[0];
+    var newContact = contacts[0];
     $httpBackend.expectPOST("/user/contacts", {contact: newContact}).
       respond(400);
 
     ContactsService.createContact(newContact).then(emptyCallback, setResponse);
     $httpBackend.flush();
 
-    compareContacts(response, newContact);
+    expect(response.status).toBe(400);
   });
 
   it("should edit new contacts", function() {
@@ -125,10 +125,10 @@ describe("ContactsService", function() {
     $httpBackend.expectPUT("/user/contacts/1", {contact: editContact}).
       respond(400)
 
-    ContactService.editContact(editContact).then(emptyCallback, setResponse);
+    ContactsService.editContact(editContact).then(emptyCallback, setResponse);
     $httpBackend.flush();
 
-    compareContacts(reponse, editContact);
+    expect(response.status).toBe(400);
   });
 
   it("should delete contacts", function() {
