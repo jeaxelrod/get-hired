@@ -1,7 +1,7 @@
 "use strict";
 
 describe("JobDataService", function() {
-  var JobDataService, JobsServiceMock, JobApplicationsServiceMock, jobs, jobApplications, $q, $timeout;
+  var JobDataService, JobsServiceMock, JobApplicationsServiceMock, ContactsServiceMock, jobs, jobApplications, $q, $timeout, contacts;
   beforeEach(module("getHired"));
 
   beforeEach(function() {
@@ -14,6 +14,14 @@ describe("JobDataService", function() {
                          comments:      "Some comments",
                          communication: "Person",
                          status:        "Active" }];
+    contacts = [{ id:                 1,
+                  user_id:            1,
+                  job_id:             1,
+                  job_application_id: 1,
+                  first_name:         "First",
+                  last_name:          "Last",
+                  email:              "first.last@email.com",
+                  phone_number:       0123456789 }];
     JobsServiceMock = {
       getJobs: function() {
         return $q(function(resolve, reject) {
@@ -28,6 +36,15 @@ describe("JobDataService", function() {
         return $q(function(resolve, reject) {
           $timeout(function() {
             resolve(jobApplications);
+          }, 100);
+        });
+      }
+    };
+    ContactsServiceMock = {
+      getContacts: function() {
+        return $q(function(resolve, reject) {
+          $timeout(function() {
+            resolve(contacts);
           }, 100);
         });
       }
@@ -55,6 +72,10 @@ describe("JobDataService", function() {
     expect(JobDataService.jobApplications()).toEqual([]);
   });
 
+  xit("should list all contacts", function() {
+    expect(JobDataService.contacts()).toEqual([]);
+  });
+
   it("should list all of its data", function() {
     expect(JobDataService.data()).toEqual([]);
   });
@@ -72,13 +93,16 @@ describe("JobDataService", function() {
   it("should update a job that already exists", function() {
     var editedJob = { id: 1, company: "Netflix", link:"http://netflix.com" };
     JobDataService.updateJobs(jobs);
+
     expect(JobDataService.jobs()).toEqual(jobs);
     expect(JobDataService.data()[0].job).toEqual(jobs[0]);
     expect(JobDataService.data()[1].job).toEqual(jobs[1]);
 
     var clonedEditedJob = JSON.parse(JSON.stringify(editedJob));
     clonedEditedJob.position = jobs[1].position;
+
     JobDataService.updateJobs([editedJob]);
+
     expect(JobDataService.jobs()).toEqual([jobs[0], clonedEditedJob]);
     expect(JobDataService.data()[1].job).toEqual(clonedEditedJob);
     expect(JobDataService.data()[0].job).toEqual(jobs[0]);
@@ -86,6 +110,7 @@ describe("JobDataService", function() {
 
   it("should update a job application with initially no job applications", function() {
     JobDataService.updateJobApplications(jobApplications);
+
     var updatedJobApplications = [JSON.parse(JSON.stringify(jobApplications[0]))];
     var date = new Date(updatedJobApplications[0].date_applied);
     var formattedDate = (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear();
@@ -106,13 +131,41 @@ describe("JobDataService", function() {
     expect(JobDataService.data()[0].job_application).toEqual(jobApplications[0]);
 
     JobDataService.updateJobApplications([updatedJobApplication]);
+
     var app = JSON.parse(JSON.stringify(jobApplications[0]));
     app.status = updatedJobApplication.status;
     var date = new Date(updatedJobApplication.date_applied);
     var formattedDate = (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear();
     app.formatted_date = formattedDate;
+
     expect(JobDataService.jobApplications()).toEqual([app]);
     expect(JobDataService.data()[0].job_application).toEqual(app);
+  });
+
+  xit("should update a contact with initially no contacts", function() {
+    JobDataService.updateContacts(contacts);
+    var clonedContacts = contacts.map(function(contact) {
+      return JSON.parse(JSON.stringify(contact));
+    });
+    expect(JobDataService.contacts()).toEqual(contacts);
+    expect(JobDataService.data()[1].contact).toEqual(clonedContacts[0]);
+  });
+
+  xit("should update a contact that already exists", function() {
+    var editedContact = { id: 1,  first_name: "Mew", last_name: "Two" };
+    JobDataService.updateContacts(contacts);
+    
+    expect(JobDataService.contacts()).toEqual(contacts);
+    expect(JobDataService.data()[1].contact).toEqual(contacts[0]);
+
+    JobDataService.updateContacts([editedContact]);
+
+    var clonedContact = JSON.parse(JSON.stringify(contacts[0]));
+    clonedContact.first_name = editedContact.first_name;
+    clonedContact.lasdt_name = editedContact.last_name;
+
+    expect(JobDataService.contacts()).toEqual([clonedContact]);
+    expect(JobDataService.data()[1].contact).toEqual(clonedContact);
   });
 
   it("should properly group jobs and their job applications", function() {
@@ -129,13 +182,24 @@ describe("JobDataService", function() {
   it("should properly group jobs and their job applications", function() {
     JobDataService.updateJobApplications(jobApplications);
     JobDataService.updateJobs(jobs);
+
     var data = JobDataService.data();
     var jobsData = JobDataService.jobs();
 
     expect(data[1].job.id).toBe(1);
     expect(data[1].job_application.job_id).toBe(1);
-    expect(JobDataService.jobs()).toEqual(jobs);
-    expect(JobDataService.jobApplications()).toEqual(jobApplications);
+  });
+
+  xit("should properly group jobs, job applications, and contacts", function() {
+    JobDataService.updateContacts(contacts);
+    JobDataService.updateJobApplications(jobApplications);
+    JobDataService.updateJobs(jobs);
+
+    var data = JobDataService.data()[1];
+
+    expect(data.job.id).toBe(1);
+    expect(data.job_application.job_id).toBe(1);
+    expect(data.contact.job_id).toBe(1);
   });
 
   it("should fetch jobs from API with initially no jobs", function() {
@@ -219,34 +283,79 @@ describe("JobDataService", function() {
 
     expect(callBackCalled).toBe(true);
   });
+  
+  xit("should fetch contacts from API with initially no contacts", function() {
+    JobDataService.refreshContacts();
+    $timeout.flush();
 
-  it("should delete jobs", function() {
+    expect(JobDataService.jobApplications()).toEqual(contacts);
+  });
+
+  xit("should fetch contacts from API and update list of current contacts", function() {
+    var oldContacts = [{ id:                 1,
+                         user_id:            1,
+                         job_id:             1,
+                         job_application_id: 1,
+                         first_name:         "OldFirst",
+                         last_name:          "OldLast",
+                         email:              "old.last@email.com",
+                         phone_number:       1112223333 }];
+    JobDataService.updateContacts(oldContacts);
+
+    expect(JobDataService.contacts()).toEqual(oldContacts);
+
+    JobDataService.refreshContacts();
+    $timeout.flush();
+
+    expect(JobDataService.contacts()).toEqual(contacts);
+  });
+
+  xit("should fetch ontacts and be a promise", function() {
+    var callbackCalled = false;
+    var callback = function() {
+      callbackCalled = true;
+    };
+
+    expect(callbackCalled).toBe(false);
+
+    JobDataService.refreshContacts().then(callback);
+    $timeout.flush();
+
+    expect(callBackCalled).toBe(true);
+  });
+
+  xit("should delete jobs", function() {
     JobDataService.updateJobs(jobs);
     JobDataService.updateJobApplications(jobApplications);
+    JobDataService.updateContacts(contacts);
 
     expect(JobDataService.jobs().length).toBe(2);
     expect(JobDataService.data().length).toBe(2);
     expect(JobDataService.jobApplications().length).toBe(1);
+    expect(JobDataService.contacts().length).toBe(1);
 
     JobDataService.deleteJob(1);
 
     expect(JobDataService.jobs().length).toBe(1);
     expect(JobDataService.data().length).toBe(1);
     expect(JobDataService.jobApplications().length).toBe(0);
+    expect(JobDataService.contacts().length).toBe(0);
   });
 
-  it("should reset all data", function() {
+  xit("should reset all data", function() {
     JobDataService.updateJobs(jobs);
     JobDataService.updateJobApplications(jobApplications);
 
     expect(JobDataService.jobs().length).toBe(2)
     expect(JobDataService.data().length).toBe(2);
     expect(JobDataService.jobApplications().length).toBe(1);
+    expect(JobDataService.contacts().length).toBe(1);
 
     JobDataService.resetData();
 
     expect(JobDataService.jobs().length).toBe(0);
     expect(JobDataService.data().length).toBe(0);
     expect(JobDataService.jobApplications().length).toBe(0);
+    expect(JobDataService.contacts().length).toBe(0);
   });
 });
