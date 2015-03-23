@@ -52,9 +52,8 @@ describe("JobDataService", function() {
     
     module(function($provide) {
       $provide.value('JobsService', JobsServiceMock);
-    });
-    module(function($provide) {
       $provide.value('JobApplicationsService', JobApplicationsServiceMock);
+      $provide.value('ContactsService', ContactsServiceMock);
     });
   });
 
@@ -72,7 +71,7 @@ describe("JobDataService", function() {
     expect(JobDataService.jobApplications()).toEqual([]);
   });
 
-  xit("should list all contacts", function() {
+  it("should list all contacts", function() {
     expect(JobDataService.contacts()).toEqual([]);
   });
 
@@ -142,30 +141,30 @@ describe("JobDataService", function() {
     expect(JobDataService.data()[0].job_application).toEqual(app);
   });
 
-  xit("should update a contact with initially no contacts", function() {
+  it("should update a contact with initially no contacts", function() {
     JobDataService.updateContacts(contacts);
     var clonedContacts = contacts.map(function(contact) {
       return JSON.parse(JSON.stringify(contact));
     });
     expect(JobDataService.contacts()).toEqual(contacts);
-    expect(JobDataService.data()[1].contact).toEqual(clonedContacts[0]);
+    expect(JobDataService.data()[0].contact).toEqual(clonedContacts[0]);
   });
 
-  xit("should update a contact that already exists", function() {
+  it("should update a contact that already exists", function() {
     var editedContact = { id: 1,  first_name: "Mew", last_name: "Two" };
     JobDataService.updateContacts(contacts);
     
     expect(JobDataService.contacts()).toEqual(contacts);
-    expect(JobDataService.data()[1].contact).toEqual(contacts[0]);
+    expect(JobDataService.data()[0].contact).toEqual(contacts[0]);
 
     JobDataService.updateContacts([editedContact]);
 
     var clonedContact = JSON.parse(JSON.stringify(contacts[0]));
     clonedContact.first_name = editedContact.first_name;
-    clonedContact.lasdt_name = editedContact.last_name;
+    clonedContact.last_name = editedContact.last_name;
 
     expect(JobDataService.contacts()).toEqual([clonedContact]);
-    expect(JobDataService.data()[1].contact).toEqual(clonedContact);
+    expect(JobDataService.data()[0].contact).toEqual(clonedContact);
   });
 
   it("should properly group jobs and their job applications", function() {
@@ -190,7 +189,7 @@ describe("JobDataService", function() {
     expect(data[1].job_application.job_id).toBe(1);
   });
 
-  xit("should properly group jobs, job applications, and contacts", function() {
+  it("should properly group jobs, job applications, and contacts", function() {
     JobDataService.updateContacts(contacts);
     JobDataService.updateJobApplications(jobApplications);
     JobDataService.updateJobs(jobs);
@@ -203,7 +202,7 @@ describe("JobDataService", function() {
   });
 
   it("should fetch jobs from API with initially no jobs", function() {
-    JobDataService.refreshJobs();
+    JobDataService.fetchJobs();
 
     $timeout.flush();
 
@@ -223,7 +222,7 @@ describe("JobDataService", function() {
     JobDataService.updateJobs(oldJobs);
     expect(JobDataService.jobs()).toEqual(oldJobs);
 
-    JobDataService.refreshJobs();
+    JobDataService.fetchJobs();
     $timeout.flush();
 
     expect(JobDataService.jobs()).toEqual([oldJobs[0], jobs[0], jobs[1]]);
@@ -238,14 +237,14 @@ describe("JobDataService", function() {
     };
     expect(callbackCalled).toBe(false);
 
-    JobDataService.refreshJobs().then(callback, emptyCallback);
+    JobDataService.fetchJobs().then(callback, emptyCallback);
     $timeout.flush();
 
     expect(callbackCalled).toBe(true);
   });
   
   it("should fetch job applications from API with initially no job applications", function() {
-    JobDataService.refreshJobApplications();
+    JobDataService.fetchJobApplications();
     $timeout.flush();
 
     expect(JobDataService.jobApplications()).toEqual(jobApplications);
@@ -265,7 +264,7 @@ describe("JobDataService", function() {
     var formattedDate = (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear();
     jobApplications[0].formatted_date = formattedDate;
 
-    JobDataService.refreshJobApplications();
+    JobDataService.fetchJobApplications();
     $timeout.flush();
 
     expect(JobDataService.jobApplications()).toEqual(jobApplications);
@@ -278,20 +277,20 @@ describe("JobDataService", function() {
     };
     expect(callBackCalled).toBe(false);
 
-    JobDataService.refreshJobApplications().then(callBack);
+    JobDataService.fetchJobApplications().then(callBack);
     $timeout.flush();
 
     expect(callBackCalled).toBe(true);
   });
   
-  xit("should fetch contacts from API with initially no contacts", function() {
-    JobDataService.refreshContacts();
+  it("should fetch contacts from API with initially no contacts", function() {
+    JobDataService.fetchContacts();
     $timeout.flush();
 
-    expect(JobDataService.jobApplications()).toEqual(contacts);
+    expect(JobDataService.contacts()).toEqual(contacts);
   });
 
-  xit("should fetch contacts from API and update list of current contacts", function() {
+  it("should fetch contacts from API and update list of current contacts", function() {
     var oldContacts = [{ id:                 1,
                          user_id:            1,
                          job_id:             1,
@@ -304,13 +303,13 @@ describe("JobDataService", function() {
 
     expect(JobDataService.contacts()).toEqual(oldContacts);
 
-    JobDataService.refreshContacts();
+    JobDataService.fetchContacts();
     $timeout.flush();
 
     expect(JobDataService.contacts()).toEqual(contacts);
   });
 
-  xit("should fetch ontacts and be a promise", function() {
+  it("should fetch contacts and be a promise", function() {
     var callbackCalled = false;
     var callback = function() {
       callbackCalled = true;
@@ -318,13 +317,26 @@ describe("JobDataService", function() {
 
     expect(callbackCalled).toBe(false);
 
-    JobDataService.refreshContacts().then(callback);
+    JobDataService.fetchContacts().then(callback);
     $timeout.flush();
 
-    expect(callBackCalled).toBe(true);
+    expect(callbackCalled).toBe(true);
   });
 
-  xit("should delete jobs", function() {
+  it("should fetch all Jobs data from API with initially no data", function() {
+    var response;
+    JobDataService.fetchData().then(function(data) {
+      response = data;
+    });
+    $timeout.flush();
+
+    expect(JobDataService.jobs()).toEqual(jobs);
+    expect(JobDataService.jobApplications()).toEqual(jobApplications);
+    expect(JobDataService.contacts()).toEqual(contacts);
+    expect(JobDataService.data()).toEqual(response);
+  });
+
+  it("should delete jobs", function() {
     JobDataService.updateJobs(jobs);
     JobDataService.updateJobApplications(jobApplications);
     JobDataService.updateContacts(contacts);
@@ -342,9 +354,10 @@ describe("JobDataService", function() {
     expect(JobDataService.contacts().length).toBe(0);
   });
 
-  xit("should reset all data", function() {
+  it("should reset all data", function() {
     JobDataService.updateJobs(jobs);
     JobDataService.updateJobApplications(jobApplications);
+    JobDataService.updateContacts(contacts);
 
     expect(JobDataService.jobs().length).toBe(2)
     expect(JobDataService.data().length).toBe(2);

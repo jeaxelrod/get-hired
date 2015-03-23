@@ -2,10 +2,11 @@
 
 var app = angular.module("getHired");
 
-app.factory("JobDataService", ['JobsService', 'JobApplicationsService', '$q',
-  function(JobsService, JobApplicationsService, $q) {
+app.factory("JobDataService", ['JobsService', 'JobApplicationsService', 'ContactsService', '$q',
+  function(JobsService, JobApplicationsService, ContactsService, $q) {
     var jobs = [];
     var jobApplications = [];
+    var contacts = [];
     var data = [];
     var findJob = function(id) {
       return jobs.filter(function(job) {
@@ -21,6 +22,7 @@ app.factory("JobDataService", ['JobsService', 'JobApplicationsService', '$q',
         }
       }
     };
+
     var findJobApplication = function(id) {
       return jobApplications.filter(function(app) {
         return app.id === id;
@@ -39,14 +41,32 @@ app.factory("JobDataService", ['JobsService', 'JobApplicationsService', '$q',
       }
     };
 
+    var findContact = function(id) {
+      return contacts.filter(function(contact) {
+        return contact.id === id;
+      })[0];
+    };
+    var updateContact = function(newContact, oldContact) {
+      for (var prop in newContact) {
+        if (newContact.hasOwnProperty(prop)) {
+          if (newContact[prop] !== oldContact[prop]) {
+            oldContact[prop] = newContact[prop];
+          }
+        }
+      }
+    };
+
     var addJob = function(job) {
       var dataElement = data.filter(function(element) {
         if (element.job_application) {
           return element.job_application.job_id === job.id;
+        } else if (element.contact) {
+          return element.contact.job_id === job.id;
         } else {
           return false;
         }
       })[0];
+
       if (dataElement) {
         dataElement.job = job;
       } else {
@@ -74,10 +94,13 @@ app.factory("JobDataService", ['JobsService', 'JobApplicationsService', '$q',
       var dataElement = data.filter(function(element) {
         if (element.job) {
           return element.job.id === app.job_id;
+        } else if (element.contact) {
+          return element.contact.job_id === app.job_id;
         } else {
           return false;
         }
       })[0];
+
       if (dataElement) {
         dataElement.job_application = app;
       } else {
@@ -85,6 +108,25 @@ app.factory("JobDataService", ['JobsService', 'JobApplicationsService', '$q',
       }
       jobApplications.push(app);
       jobApplications.sort(function(a, b) {
+        return b.id - a.id;
+      });
+    };
+    var addContact = function(contact) {
+      var dataElement = data.filter(function(element) {
+        if (element.job) {
+          return element.job.id === contact.job_id;
+        } else if (element.job_application) {
+          return element.job_application.job_id === contact.job_id;
+        }
+      })[0];
+
+      if (dataElement) {
+        dataElement.contact = contact;
+      } else {
+        data.push({contact: contact});
+      }
+      contacts.push(contact);
+      contacts.sort(function(a, b) {
         return b.id - a.id;
       });
     };
@@ -109,6 +151,16 @@ app.factory("JobDataService", ['JobsService', 'JobApplicationsService', '$q',
         }
       });
     };
+    var updateContacts = function(newContacts) {
+      newContacts.forEach(function(newContact) {
+        var oldContact = findContact(newContact.id);
+        if (oldContact) {
+          updateContact(newContact, oldContact);
+        } else {
+          addContact(newContact);
+        }
+      });
+    };
           
     var formatDate = function(milliseconds) {
       var date = new Date(milliseconds);
@@ -121,13 +173,17 @@ app.factory("JobDataService", ['JobsService', 'JobApplicationsService', '$q',
       jobApplications: function() {
         return jobApplications;
       },
+      contacts: function() {
+        return contacts;
+      },
       data: function() {
         return data;
       },
       updateJobs: updateJobs,
       updateJobApplications: updateJobApplications,
+      updateContacts: updateContacts,
       deleteJob: function(job) {
-        var jobsIndex, dataIndex, appsIndex;
+        var jobsIndex, dataIndex, appsIndex, contactsIndex;
         jobs.some(function(element, index) {
           if (element.id === job.id) {
             jobsIndex = index;
@@ -146,34 +202,66 @@ app.factory("JobDataService", ['JobsService', 'JobApplicationsService', '$q',
             return true;
           }
         });
+        contacts.some(function(element, index) {
+          if (element.job_id === job.id) {
+            contactsIndex = index;
+            return true;
+          }
+        });
 
         jobs.splice(jobsIndex, 1);
         data.splice(dataIndex, 1);
         jobApplications.splice(appsIndex, 1);
+        contacts.splice(contactsIndex, 1);
       },
-      refreshJobs: function() {
+      fetchJobs: function() {
         return $q(function(resolve, reject) {
           JobsService.getJobs().then(function(response) {
             updateJobs(response);
             resolve(response);
           }, function(response) {
-            reject(response)
+            reject(response);
           });
         });
       },
-      refreshJobApplications: function() {
+      fetchJobApplications: function() {
         return $q(function(resolve, reject) {
           JobApplicationsService.getJobApplications().then(function(response) {
             updateJobApplications(response);
             resolve(response);
           }, function(response) {
-            reject(response) 
+            reject(response);
           });
         });
+      },
+      fetchContacts: function() {
+        return $q(function(resolve, reject) {
+          ContactsService.getContacts().then(function(response) {
+            updateContacts(response);
+            resolve(response);
+          }, function(response) {
+            reject(response);
+          });
+        });
+      },
+      fetchData: function() {
+        var deferred = $q.defer(),
+        jobsPromise = JobsService.getJobs().then(function(response) {
+          updateJobs(response);
+        }),
+        appsPromise = JobApplicationsService.getJobApplications().then(function(response) {
+          updateJobApplications(response);
+        }),
+        contactsPromise = ContactsService.getContacts().then(function(response) {
+          updateContacts(response);
+        });
+        $q.all([jobsPromise, appsPromise, contactsPromise]).then( deferred.resolve(data), deferred.reject({error: "Unable to successfully fetch data"}));
+        return deferred.promise;
       },
       resetData: function() {
         jobs = [];
         jobApplications = [];
+        contacts = [];
         data = [];
       }
     };
