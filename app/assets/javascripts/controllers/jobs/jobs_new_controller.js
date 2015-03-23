@@ -8,8 +8,7 @@ app.controller("JobsNewController", ["$scope", "$state", "JobsService", "JobData
       $scope.jobData = JobDataService.data();
     };
     updateJobData();
-    JobDataService.refreshJobs().then(updateJobData);
-    JobDataService.refreshJobApplications().then(updateJobData);
+    JobDataService.fetchData().then(updateJobData);
 
     var createNewJobsHelpers = function() {
       var counter = 0;

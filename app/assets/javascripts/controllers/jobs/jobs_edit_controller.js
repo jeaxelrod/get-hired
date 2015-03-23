@@ -8,8 +8,7 @@ app.controller("JobsEditController", ["$scope", "$stateParams", "JobsService", "
       $scope.jobData = JobDataService.data();
     };
     updateJobData();
-    JobDataService.refreshJobs().then(updateJobData);
-    JobDataService.refreshJobApplications().then(updateJobData);
+    JobDataService.fetchData().then(updateJobData);
 
     $scope.editJob = function(job) {
       var editedJob = { id: job.id, position: job.position, company: job.company, link: job.link }; 

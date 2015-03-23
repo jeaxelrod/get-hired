@@ -8,8 +8,7 @@ app.controller("JobApplicationsNewController", ["$scope", "JobApplicationsServic
       $scope.jobData = JobDataService.data();
     };
     updateJobData();
-    JobDataService.refreshJobs().then(updateJobData);
-    JobDataService.refreshJobApplications().then(updateJobData);
+    JobDataService.fetchData().then(updateJobData);
 
     $scope.jobUrl = function(job) {
       if (job.id == $stateParams.jobId) {
