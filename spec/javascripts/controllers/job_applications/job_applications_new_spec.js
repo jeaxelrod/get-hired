@@ -120,8 +120,10 @@ describe("JobApplicationsNewController", function() {
     expect(JobDataService.contacts().length).toBe(0);
   });
 
-  it("should create a new job application", function() {
+  it("should create a new job application and its contact", function() {
     var newApp = {id: 2, job_id: 2, user_id: 1, date_applied: Date.now(), comments: "Meow", communication: "Cat", status: "denied"};
+    var newContact = { id: 2, job_id: 2, job_application_id: 2, first_name: "John", last_name: "Doe", email: "john.doe@email.com", phone_number: 1234567890 };
+
     $httpBackend.expectGET("/user/jobs").
       respond(jobs);
     $httpBackend.expectGET("/user/job_applications").
@@ -131,19 +133,30 @@ describe("JobApplicationsNewController", function() {
     $httpBackend.flush();
 
     expect(JobDataService.jobApplications().length).toBe(1);
+    expect(JobDataService.contacts().length).toBe(1);
 
-    scope.createJobApplication(newApp);
+    scope.createJobApplication(newApp, newContact);
     $httpBackend.expectPOST("/user/jobs/2/job_applications", {job_application: newApp}).
       respond(newApp);
+    $httpBackend.expectPOST("/user/contacts", {contact: newContact}).
+      respond(newContact);
     $httpBackend.flush();
     scope.$digest();
 
-    compareJobApplications(scope.jobData[0].job_application, newApp);
+    compareJobApplications(scope.jobData[0].job_application,    newApp);
+    compareJobApplications(JobDataService.jobApplications()[0], newApp);
+
+    compareContacts(scope.jobData[0].contact, newContact);
+    compareContacts(JobDataService.contacts()[0], newContact);
+
     expect(JobDataService.jobApplications().length).toBe(2);
+    expect(JobDataService.contacts().length).toBe(2);
   });
 
-  it("should handle failure when creating a new job application", function() {
+  it("should handle failure when creating a new job application and its contact", function() {
     var newApp = {id: 2, job_id: 2, user_id: 1, date_applied: Date.now(), comments: "Meow", communication: "Cat", status: "denied"};
+    var newContact = { id: 2, job_id: 3, job_application_id: 2, first_name: "John", last_name: "Doe", email: "john.doe@email.com", phone_number: 1234567890 };
+
     $httpBackend.expectGET("/user/jobs").
       respond(jobs);
     $httpBackend.expectGET("/user/job_applications").
@@ -153,13 +166,17 @@ describe("JobApplicationsNewController", function() {
     $httpBackend.flush();
 
     expect(JobDataService.jobApplications().length).toBe(1);
+    expect(JobDataService.contacts().length).toBe(1);
 
-    scope.createJobApplication(newApp);
+    scope.createJobApplication(newApp, newContact);
     $httpBackend.expectPOST("/user/jobs/2/job_applications", {job_application: newApp}).
+      respond(400);
+    $httpBackend.expectPOST("/user/contacts", {contact: newContact}).
       respond(400);
     $httpBackend.flush();
     
     expect(JobDataService.jobApplications().length).toBe(1);
+    expect(JobDataService.contacts().length).toBe(1);
   });
 });
 

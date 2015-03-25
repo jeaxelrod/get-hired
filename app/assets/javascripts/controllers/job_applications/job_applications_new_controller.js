@@ -2,8 +2,8 @@
 
 var app = angular.module("getHired");
 
-app.controller("JobApplicationsNewController", ["$scope", "JobApplicationsService", "$stateParams", "$state", "JobDataService",
-  function($scope, JobApplicationsService, $stateParams, $state, JobDataService) {
+app.controller("JobApplicationsNewController", ["$scope", "JobApplicationsService", "$stateParams", "$state", "JobDataService", "ContactsService", "$q",
+  function($scope, JobApplicationsService, $stateParams, $state, JobDataService, ContactsService, $q) {
     var updateJobData = function() {
       $scope.jobData = JobDataService.data();
     };
@@ -31,16 +31,23 @@ app.controller("JobApplicationsNewController", ["$scope", "JobApplicationsServic
       return new Date(); 
     };
 
-    $scope.createJobApplication = function(jobApplication) {
-      var success = function(response) {
+    $scope.createJobApplication = function(jobApplication, contact) {
+      var appsPromise = JobApplicationsService.createJobApplication(jobApplication).then(function(response) {
         JobDataService.updateJobApplications([response]);
         updateJobData();
+      } , failure);
+      var contactsPromise = ContactsService.createContact(contact).then(function(response) {
+        JobDataService.updateContacts([response]);
+        updateJobData();
+      });
+
+      $q.all([appsPromise, contactsPromise]).then(function() {
         $state.go("jobs");
-      };
+      });
+
       var failure = function(response) {
         //Handle failure to create new job app
       };
-      JobApplicationsService.createJobApplication(jobApplication).then(success, failure);
     };
 
   }
