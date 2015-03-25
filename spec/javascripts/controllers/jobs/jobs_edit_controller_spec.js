@@ -186,6 +186,16 @@ describe("JobsEditController", function() {
                     comments:      "New Comments",
                     communication: app.communication,
                     status:        "Interviewing" };
+    var contact = contacts[0];
+    var editContact = { id:                 contact.id,
+                        user_id:            contact.user_id,
+                        job_id:             contact.job_id,
+                        job_application_id: contact.job_application_id,
+                        first_name:         "New",
+                        last_name:          contact.last_name,
+                        email:              "new.last@email.com",
+                        phone_number:       contact.phone_number };
+
 
     $httpBackend.expectGET("/user/jobs").
       respond(jobs);
@@ -204,13 +214,18 @@ describe("JobsEditController", function() {
       respond(editJob);
     $httpBackend.expectPUT("/user/jobs/1/job_applications/1", {job_application: editApp}).
       respond(editApp);
-    scope.editJobAndApp(editJob, editApp);
+    $httpBackend.expectPUT("/user/contacts/1", {contact: editContact}).
+      respond(editContact);
+
+    scope.editJobAppContact(editJob, editApp, editContact);
     $httpBackend.flush();
     scope.$digest();
 
     compareJobs(scope.jobData[1].job,     editJob);
     compareJobs(JobDataService.jobs()[1], editJob); 
-    compareJobApplications(scope.jobData[1].job_application, editApp); 
+    compareJobApplications(scope.jobData[1].job_application,    editApp); 
     compareJobApplications(JobDataService.jobApplications()[0], editApp); 
+    compareContacts(scope.jobData[1].contact,     editContact);
+    compareContacts(JobDataService.contacts()[0], editContact);
   });
 });

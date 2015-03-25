@@ -2,8 +2,8 @@
 
 var app = angular.module("getHired");
 
-app.controller("JobsEditController", ["$scope", "$stateParams", "JobsService", "$state", "JobDataService", "JobApplicationsService",
-  function($scope, $stateParams, JobsService, $state, JobDataService, JobApplicationsService) {
+app.controller("JobsEditController", ["$scope", "$stateParams", "JobsService", "$state", "JobDataService", "JobApplicationsService", "ContactsService", "$q",
+  function($scope, $stateParams, JobsService, $state, JobDataService, JobApplicationsService, ContactsService, $q) {
     var updateJobData = function() {
       $scope.jobData = JobDataService.data();
     };
@@ -29,24 +29,29 @@ app.controller("JobsEditController", ["$scope", "$stateParams", "JobsService", "
 
       JobsService.editJob(editedJob).then(successCallback, failureCallback);
     };
-    $scope.editJobAndApp = function(job, app) {
+    $scope.editJobAppContact = function(job, app, contact) {
       var editedJob = { id: job.id, position: job.position, company: job.company, link: job.link }; 
       var editedApp = { id: app.id, user_id: app.user_id, job_id: app.job_id, date_applied: app.date_applied, comments: app.comments, communication: app.communication, status: app.status };
+      var editedContact = { id: contact.id, user_id: contact.user_id, job_id: contact.job_id, job_application_id: contact.job_application_id, first_name: contact.first_name, last_name: contact.last_name, email: contact.email, phone_number: contact.phone_number };
 
-      var successCallback = function(response) {
+      var jobsPromise = JobsService.editJob(editedJob).then(function(response) {
         JobDataService.updateJobs([response]);
+        updateJobData()
+      } , failureCallback);
+
+      var appsPromise = JobApplicationsService.editJobApplication(editedApp).then(function(response) {
+        JobDataService.updateJobApplications([response]);
         updateJobData();
+      });
 
-        var updateJobDataAndLeave = function(response) {
-          JobDataService.updateJobApplications([response]);
-          updateJobData();
-          $state.go("jobs");
-        };
-        var handleEditFailure = function(response) {
-        };
-
-        JobApplicationsService.editJobApplication(editedApp).then(updateJobDataAndLeave, handleEditFailure);
-      };
+      var contactsPromise = ContactsService.editContact(editedContact).then(function(response) {
+        JobDataService.updateContacts([response]);
+        updateJobData();
+      });
+      
+      $q.all([jobsPromise, appsPromise, contactsPromise]).then(function() {
+        $state.go("jobs");
+      });
 
       var failureCallback = function(response) {
         if (response.data.errors.link) {
@@ -58,8 +63,6 @@ app.controller("JobsEditController", ["$scope", "$stateParams", "JobsService", "
           }
         }
       };
-
-      JobsService.editJob(editedJob).then(successCallback, failureCallback);
     };
 
     $scope.jobUrl = function(row) {
