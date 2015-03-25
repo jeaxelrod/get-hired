@@ -2,8 +2,8 @@
 
 var app = angular.module("getHired");
 
-app.controller("JobsNewController", ["$scope", "$state", "JobsService", "JobDataService", "JobApplicationsService",
-  function($scope, $state, JobsService, JobDataService, JobApplicationsService) {
+app.controller("JobsNewController", ["$scope", "$state", "JobsService", "JobDataService", "JobApplicationsService", "ContactsService",
+  function($scope, $state, JobsService, JobDataService, JobApplicationsService, ContactsService) {
     var updateJobData = function() {
       $scope.jobData = JobDataService.data();
     };
@@ -76,27 +76,27 @@ app.controller("JobsNewController", ["$scope", "$state", "JobsService", "JobData
       JobsService.createJob(job).then(successCallback, failureCallback);
     };
 
-    $scope.createJobAndApp = function(newJob, newApp) {
-      var createJobApplication = function(response) {
+    $scope.createJobAppContact = function(newJob, newApp, newContact) {
+      JobsService.createJob(newJob).then(function(response) {
         JobDataService.updateJobs([response]);
         updateJobData();
-        newApp.job_id = response.id;
-        JobApplicationsService.createJobApplication(newApp).then(function(response) {
-          var index = $scope.newJobsList.indexOf(newJob);
-          if (index != -1) {
-            $scope.newJobsList.splice(index, 1);
-          }
-          JobDataService.updateJobApplications([response]);
-          updateJobData();
-        }, function(response) {
-          //Handle failures in creating new Job app
-        });
-      };
-
-      JobsService.createJob(newJob).then(createJobApplication, function(response) {
+      }, function(response) {
         if (response.data.errors.link) {
           newJob.linkError = true;
         }
+      });
+
+      newApp.job_id = newJob.id;
+      JobApplicationsService.createJobApplication(newApp).then(function(response) {
+        JobDataService.updateJobApplications([response])
+        updateJobData();
+      });
+
+      newContact.job_id = newJob.id;
+      newContact.job_application_id = newApp.id;
+      ContactsService.createContact(newContact).then(function(response) {
+        JobDataService.updateContacts([response]);
+        updateJobData();
       });
     };
   }

@@ -139,9 +139,10 @@ describe("JobsNewController", function() {
     expect(scope.jobData.length).toBe(2);
   });
 
-  it("should create new job and its job application", function() {
+  it("should create new job, its job application, and contacts", function() {
     var newJob = { id: 3, position: "Internship", company: "Facebook", link: "http://facebook.com" }
     var newApp = { id: 2, date_applied: Date.now(), comments: "Applied online", communication: "meow", status: "Denied" };
+    var newContact = { id: 2, job_id: 3, job_application_id: 2, first_name: "John", last_name: "Doe", email: "john.doe@email.com", phone_number: 1234567890 };
 
     $httpBackend.expectGET("/user/jobs").
       respond(jobs);
@@ -157,8 +158,10 @@ describe("JobsNewController", function() {
       respond(newJob);
     $httpBackend.expectPOST("/user/jobs/3/job_applications", {job_application: newApp}).
       respond(newApp);
+    $httpBackend.expectPOST("/user/contacts", {contact: newContact}).
+      respond(newContact);
 
-    scope.createJobAndApp(newJob, newApp);
+    scope.createJobAppContact(newJob, newApp, newContact);
     $httpBackend.flush();
 
     expect(scope.jobData.length).toBe(3);
@@ -167,21 +170,30 @@ describe("JobsNewController", function() {
 
     compareJobApplications(scope.jobData[0].job_application, newApp);
     compareJobApplications(JobDataService.jobApplications()[0], newApp);
+
+    compareContacts(scope.jobData[0].contact, newContact);
+    compareContacts(JobDataService.contacts()[0], newContact);
   });
 
-  it("should fail to create a new job and job application if invalid link", function() {
+  it("should fail to create a new job, job application, and contacts if invalid link", function() {
     var newJob = { id: 3, position: "Internship", company: "Facebook", link: "facebook.com" }
     var newApp = { id: 2, job_id: 3, date_applied: Date.now(), comments: "Applied online", communication: "meow", status: "Denied" };
+    var newContact = { id: 2, job_id: 3, job_application_id: 2, first_name: "John", last_name: "Doe", email: "john.doe@email.com", phone_number: 1234567890 };
     $httpBackend.expectGET("/user/jobs").
       respond(jobs);
     $httpBackend.expectGET("/user/job_applications").
       respond(jobApplications);
     $httpBackend.expectGET("/user/contacts").
       respond(contacts);
+
     $httpBackend.expectPOST("/user/jobs", {job: newJob}).
       respond(422, {errors: {link: ["invalid url"]}});
+    $httpBackend.expectPOST("/user/jobs/3/job_applications", {job_application: newApp}).
+      respond(400);
+    $httpBackend.expectPOST("/user/contacts", {contact: newContact}).
+      respond(400);
 
-    scope.createJobAndApp(newJob, newApp);
+    scope.createJobAppContact(newJob, newApp, newContact);
     $httpBackend.flush();
 
     expect(newJob.linkError).toBe(true);
