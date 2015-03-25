@@ -4,9 +4,11 @@ RSpec.feature "Jobs", :type => :feature, js: true do
   include Warden::Test::Helpers
   Warden.test_mode!
 
-  scenario "Index page displays job info" do
-    user = FactoryGirl.create(:user)
-    job  = FactoryGirl.create(:job, user: user)
+  scenario "Index page displays job, job_application, and contacts info" do
+    contact = FactoryGirl.create(:contact)
+    app = contact.job_application
+    user = contact.user 
+    job  = contact.job
     login_as(user, :scope => :user)
 
     visit root_path
@@ -15,6 +17,8 @@ RSpec.feature "Jobs", :type => :feature, js: true do
     expect(page).to have_content(job.position)
     expect(page).to have_content(job.company)
     expect(page).to have_link(job.link.split("http://")[1])
+    expect(page).to have_content(app.status)
+    expect(page).to have_content(contact.first_name)
   end
 
   scenario "Creating new jobs" do
@@ -39,27 +43,32 @@ RSpec.feature "Jobs", :type => :feature, js: true do
     expect(page).to have_link "facebook.com"
   end
   
-  scenario "Creating new job and job application" do
+  scenario "Creating new job, job application, and contact" do
     user = FactoryGirl.create(:user)
     login_as(user, :scope => :user)
     new_job = { position: "Internship",
                 company:  "Facebook",
                 link:     "http://facebook.com" }
-    new_app = { communication: "Some person",
-                comments:      "Laurem ipsum",
+    new_app = { comments:      "Laurem ipsum",
                 status:        "Applied" }
-
+    new_contact = { first_name:   "First",
+                    last_name:    "Last",
+                    email:        "first.last@email.com",
+                    phone_number: 1234567890 }
     visit root_path
     click_link "Jobs"
 
     click_button "New Job"
     click_button "Apply"
 
-    fill_in "Position", with: "Internship"
-    fill_in "Company", with: "Facebook"
-    fill_in "Link", with: "http://facebook.com"
-    fill_in "Communication", with: new_app[:communication]
-    fill_in "Comments",      with: new_app[:comments]
+    fill_in "Position",     with: new_job[:position] 
+    fill_in "Company",      with: new_job[:company] 
+    fill_in "Link",         with: new_job[:link] 
+    fill_in "First Name",   with: new_contact[:first_name]
+    fill_in "Last Name",    with: new_contact[:last_name]
+    fill_in "Email",        with: new_contact[:email]
+    fill_in "Phone Number", with: new_contact[:phone_number]
+    fill_in "Comments",     with: new_app[:comments]
     click_button "Create Job"
 
     expect(user.jobs.length).to eq(1)
@@ -72,6 +81,11 @@ RSpec.feature "Jobs", :type => :feature, js: true do
     expect(page).to have_content new_app[:communication] 
     expect(page).to have_content new_app[:comments]
     expect(page).to have_content new_app[:status]
+
+    expect(page).to have_content new_contact[:first_name]
+    expect(page).to have_content new_contact[:last_name]
+    expect(page).to have_content new_contact[:email]
+    expect(page).to have_content new_contact[:phone_number]
   end
 
   scenario "Failing to create a new job" do
@@ -89,7 +103,7 @@ RSpec.feature "Jobs", :type => :feature, js: true do
     expect(page).to have_field "Company"
   end
 
-  scenario "Failing ot create a new job and app" do
+  scenario "Failing to create a new job, app, and contact" do
     user = FactoryGirl.create(:user)
     login_as(user, :scope => :user)
 
@@ -137,10 +151,11 @@ RSpec.feature "Jobs", :type => :feature, js: true do
     expect(page).to have_content("Cat Sitter")
   end
 
-  scenario "Editing a Job and Job Application" do
-    user = FactoryGirl.create(:user)
-    job  = FactoryGirl.create(:job, user: user)
-    app  = FactoryGirl.create(:job_application, job: job, user: user)
+  scenario "Editing a Job, Job Application, and Contact" do
+    contact = FactoryGirl.create(:contact)
+    user = contact.user
+    job  = contact.job
+    app  = contact.job_application 
     login_as(user, :scope => :user)
 
     visit root_path
@@ -148,16 +163,19 @@ RSpec.feature "Jobs", :type => :feature, js: true do
 
     click_button "Edit"
     expect(page).to have_field("Link")
-    expect(page).to have_field("Communication")
+    expect(page).to have_field("First Name")
+    expect(page).to have_field("Comments")
 
-    fill_in "Position", with: "Cat Sitter"
-    fill_in "Comments", with: "3 Baby kitties"
+    fill_in "Position",  with: "Cat Sitter"
+    fill_in "Comments",  with: "3 Baby kitties"
+    fill_in "Last Name", with: "Meow"
     click_button "Edit Job"
 
     expect(page).to_not have_field("Link")
     expect(page).to_not have_field("Communication")
     expect(page).to have_content("Cat Sitter")
     expect(page).to have_content("3 Baby kitties")
+    expect(page).to have_content("Meow")
   end
 
   scenario "Canceling an edit jobs request" do
