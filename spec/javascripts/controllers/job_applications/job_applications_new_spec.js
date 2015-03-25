@@ -171,8 +171,6 @@ describe("JobApplicationsNewController", function() {
     scope.createJobApplication(newApp, newContact);
     $httpBackend.expectPOST("/user/jobs/2/job_applications", {job_application: newApp}).
       respond(400);
-    $httpBackend.expectPOST("/user/contacts", {contact: newContact}).
-      respond(400);
     $httpBackend.flush();
     
     expect(JobDataService.jobApplications().length).toBe(1);

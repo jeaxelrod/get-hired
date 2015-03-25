@@ -35,16 +35,14 @@ app.controller("JobApplicationsNewController", ["$scope", "JobApplicationsServic
       var appsPromise = JobApplicationsService.createJobApplication(jobApplication).then(function(response) {
         JobDataService.updateJobApplications([response]);
         updateJobData();
+        contact.job_id = response.job_id;
+        contact.job_application_id = response.job_application_id;
+        ContactsService.createContact(contact).then(function(response) {
+          JobDataService.updateContacts([response]);
+          updateJobData();
+          $state.go("jobs");
+        });
       } , failure);
-      var contactsPromise = ContactsService.createContact(contact).then(function(response) {
-        JobDataService.updateContacts([response]);
-        updateJobData();
-      });
-
-      $q.all([appsPromise, contactsPromise]).then(function() {
-        $state.go("jobs");
-      });
-
       var failure = function(response) {
         //Handle failure to create new job app
       };

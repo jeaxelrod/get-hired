@@ -6,7 +6,13 @@
   <input ng-model="row.job.link"     class="form-control" placeholder="Link">
 </td>
   <td><input ui-date ng-model="row.job_application.date_applied" class="form-control" placeholder="Date Applied"></td>
-  <td><input ng-model="row.job_application.communication"        class="form-control" placeholder="Communication"></td>
+  <td>
+    <p><input ng-model="row.contact.first_name"  class="form-control" placeholder="First Name"></p>
+
+    <p><input ng-model="row.contact.last_name"   class="form-control" placeholder="Last Name"></p>
+    <p><input ng-model="row.contact.email"       class="form-control" placeholder="Email"></p>
+    <p><input ng-model="row.contact.phone_number"class="form-control" placeholder="Phone Number"></p>
+  </td>
   <td><textarea ng-model="row.job_application.comments"          class="form-control" placeholder="Comments"></textarea></td>
   <td>
     <select ng-model="row.job_application.status"                class="form-control" placeholder="Status">
@@ -15,5 +21,5 @@
       <option>Denied</option>
     </select>
    </td>
-<td><button ng-click="editJobAndApp(row.job, row.job_application)" class="btn btn-primary">Edit Job</button></td>
+<td><button ng-click="editJobAppContact(row.job, row.job_application, row.contact)" class="btn btn-primary">Edit Job</button></td>
 

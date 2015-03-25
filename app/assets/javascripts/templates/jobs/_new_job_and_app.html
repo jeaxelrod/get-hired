@@ -13,7 +13,11 @@
     <input ng-model="job.link" class="form-control" placeholder="Link">
   </td>
   <td><input ui-date ng-model="job.newApp.date_applied" class="form-control" placeholder="Date Applied" ng-init="job.newApp.date_applied = setTodaysDate()"></td>
-  <td><input ng-model="job.newApp.communication"        class="form-control" placeholder="Communication"></td>
+  <td>
+    <p><input ng-model="job.newContact.first_name" class="form-control" placeholder="First Name"></p>
+    <p><input ng-model="job.newContact.last_name" class="form-control" placeholder="Last Name"></p>
+    <p><input ng-model="job.newContact.email" class="form-control" placeholder="Email"></p>
+    <p><input ng-model="job.newContact.phone_number" class="form-control" placeholder="Phone Number"></p>
   <td><textarea ng-model="job.newApp.comments"          class="form-control" placeholder="Comments"></textarea></td>
   <td>
     <select ng-model="job.newApp.status"                class="form-control" placeholder="Status" ng-init="job.newApp.status = 'Applied'">
@@ -23,7 +27,7 @@
     </select>
    </td>
   <td>
-    <button ng-click="createJobAndApp(job, job.newApp)" type=submit" class="btn btn-primary">Create Job</button>
+    <button ng-click="createJobAppContact(job, job.newApp, job.newContact)" type=submit" class="btn btn-primary">Create Job</button>
     <button ng-click="job.newApp = undefined" class="btn btn-link">Cancel App</button>
   </td>
 </form>

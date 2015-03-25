@@ -9,7 +9,12 @@
   <td>{{row.job.company}}</td>
   <td><a target="_blank" href={{row.job.link}}>{{row.job.link | link}}</a></td>
   <td><input ui-date ng-model="row.new_job_application.date_applied" class="form-control" placeholder="Date Applied" ng-init="row.new_job_application.date_applied = setTodaysDate()"></td>
-  <td><input ng-model="row.new_job_application.communication"        class="form-control" placeholder="Communication"></td>
+  <td>
+    <p><input ng-model="row.new_contact.first_name"   class="form-control" placeholder="First Name"></p>
+    <p><input ng-model="row.new_contact.last_name"    class="form-control" placeholder="Last Name"></p>
+    <p><input ng-model="row.new_contact.email"        class="form-control" placeholder="Email"></p>
+    <p><input ng-model="row.new_contact.phone_number" class="form-control" placeholder="Phone Number"></p>
+  </td>
   <td><textarea ng-model="row.new_job_application.comments"          class="form-control" placeholder="Comments"></textarea></td>
   <td>
     <select ng-model="row.new_job_application.status"              class="form-control" placeholder="Status" ng-init="row.new_job_application.status = 'Applied'">
@@ -18,6 +23,6 @@
       <option>Denied</option>
     </select>
    </td>
-  <td><button ng-click="createJobApplication(row.new_job_application)" type=submit" class="btn">Create Application</button></td>
+  <td><button ng-click="createJobApplication(row.new_job_application, row.new_contact)" type=submit" class="btn">Create Application</button></td>
 </form>
 

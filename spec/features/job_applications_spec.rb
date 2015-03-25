@@ -17,14 +17,12 @@ RSpec.feature "Job Applications", :type => :feature, js: true do
     click_link "Jobs"
     click_button "Apply"
 
-    fill_in "Communication", with: new_app[:communication]
     fill_in "Comments",      with: new_app[:comments]
     fill_in "First Name",    with: new_contact[:first_name]
     click_button "Create Application"
 
     expect(user.job_applications.length).to eq(1)
     expect(page).to have_content Date.today.strftime("%-m/%-d/%Y") 
-    expect(page).to have_content new_app[:communication] 
     expect(page).to have_content new_app[:comments]
     expect(page).to have_content new_app[:status]
     expect(page).to have_content new_contact[:first_name]

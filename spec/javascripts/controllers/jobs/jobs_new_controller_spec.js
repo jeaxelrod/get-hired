@@ -188,10 +188,6 @@ describe("JobsNewController", function() {
 
     $httpBackend.expectPOST("/user/jobs", {job: newJob}).
       respond(422, {errors: {link: ["invalid url"]}});
-    $httpBackend.expectPOST("/user/jobs/3/job_applications", {job_application: newApp}).
-      respond(400);
-    $httpBackend.expectPOST("/user/contacts", {contact: newContact}).
-      respond(400);
 
     scope.createJobAppContact(newJob, newApp, newContact);
     $httpBackend.flush();

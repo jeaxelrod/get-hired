@@ -80,23 +80,25 @@ app.controller("JobsNewController", ["$scope", "$state", "JobsService", "JobData
       JobsService.createJob(newJob).then(function(response) {
         JobDataService.updateJobs([response]);
         updateJobData();
+        newApp.job_id = response.id;
+        newContact.job_id = response.id;
+        JobApplicationsService.createJobApplication(newApp).then(function(response) {
+          JobDataService.updateJobApplications([response]);
+          updateJobData();
+          newContact.job_application_id = response.id;
+          ContactsService.createContact(newContact).then(function(response) {
+            var index = $scope.newJobsList.indexOf(newJob);
+            if (index != -1) {
+              $scope.newJobsList.splice(index, 1);
+            }
+            JobDataService.updateContacts([response]);
+            updateJobData();
+          });
+        });
       }, function(response) {
         if (response.data.errors.link) {
           newJob.linkError = true;
         }
-      });
-
-      newApp.job_id = newJob.id;
-      JobApplicationsService.createJobApplication(newApp).then(function(response) {
-        JobDataService.updateJobApplications([response])
-        updateJobData();
-      });
-
-      newContact.job_id = newJob.id;
-      newContact.job_application_id = newApp.id;
-      ContactsService.createContact(newContact).then(function(response) {
-        JobDataService.updateContacts([response]);
-        updateJobData();
       });
     };
   }
