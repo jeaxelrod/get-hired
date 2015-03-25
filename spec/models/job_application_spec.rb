@@ -29,7 +29,6 @@ RSpec.describe JobApplication, :type => :model do
   end
 
   it "deletes when its job deletes" do
-    @job_application = FactoryGirl.create(:job_application)
     job = @job_application.job
     expect(job.job_applications.length).to eq(1)
 
