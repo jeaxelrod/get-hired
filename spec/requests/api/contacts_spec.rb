@@ -62,7 +62,7 @@ describe "Contacts API" do
     contact = FactoryGirl.create(:contact)
     job = contact.job
     user = contact.user
-    contact2 =  job.contacts.create()
+    contact2 =  job.contacts.create(user_id: user.id)
     login_as(user, :scope => :user)
 
     get "/user/jobs/#{job.id}/contacts"
