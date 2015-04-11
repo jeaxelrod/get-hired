@@ -3,29 +3,54 @@
 describe("JobApplicationsNewController", function() {
   var scope, controller, $httpBackend, jobs, jobApplications, JobDataService, contacts;
 
-  var compareJobs = function(actualJob, expectedJob) {
-    var props = ["id", "position", "company", "link"];
-    for (var i=0; i< props.length; i++) {
-      var prop = props[i];
-      expect(actualJob[prop]).toEqual(expectedJob[prop]);
-    }
-  };
-  var compareJobApplications = function(actualApp, expectedApp) {
-    var props = ["id", "job_id", "user_id", "date_applied", "comments", "communication", "status"];
-    for (var i =0; i < props.length; i++) {
-      var prop = props[i];
-      expect(actualApp[prop]).toEqual(expectedApp[prop]);
-    }
-  };
-  var compareContacts = function(actualContact, expectedContact) {
-    var props = ["id", "job_id", "user_id", "job_application_id", "first_name", "last_name", "email", "phone_number"];
-    for (var i=0; i < props.length; i++) {
-      var prop = props[i];
-      expect(actualContact[prop]).toEqual(expectedContact[prop]);
-    }
-  };
-
   beforeEach(module('getHired'));
+
+  beforeEach(function() {
+    this.addMatchers({
+      toEqualJob: function(expected) {
+        var props = ["id", "position", "company", "link"],
+            actual = this.actual;
+        this.message = function() {
+          return "Expect " + JSON.stringify(actual) + " to equal job " + JSON.stringify(expected);
+        };
+        for (var i=0; i< props.length; i++) {
+          var prop = props[i];
+          if (actual[prop] !== expected[prop]) {
+            return false;
+          }
+        }
+        return true;
+      },
+      toEqualJobApplication: function(expected) {
+        var props = ["id", "job_id", "user_id", "date_applied", "comments", "communication", "status"],
+            actual = this.actual;
+        this.message= function() {
+          return "Expect " + JSON.stringify(actual) + " to equal job application " + JSON.stringify(expected);
+        };
+        for (var i=0; i< props.length; i++) {
+          var prop = props[i];
+          if (actual[prop] !== expected[prop]) {
+            return false;
+          }
+        }
+        return true;
+      },
+      toEqualContact: function(expected) {
+        var props = ["id", "job_id", "user_id", "job_application_id", "first_name", "last_name", "email", "Hone_number"],
+            actual = this.actual;
+        this.message= function() {
+          return "Expect " + JSON.stringify(actual) + " to equal job application " + JSON.stringify(expected);
+        };
+        for (var i=0; i< props.length; i++) {
+          var prop = props[i];
+          if (actual[prop] !== expected[prop]) {
+            return false;
+          }
+        }
+        return true;
+      }
+    });
+  });
 
   beforeEach(inject(function($rootScope, $controller, _$httpBackend_, _JobDataService_) {
     scope = $rootScope.$new();
@@ -47,16 +72,16 @@ describe("JobApplicationsNewController", function() {
       respond(contacts);
     $httpBackend.flush();
     
-    compareJobs(scope.jobData[0].job, jobs[0]);
-    compareJobs(scope.jobData[1].job, jobs[1]);
-    compareJobs(JobDataService.jobs()[0], jobs[0]);
-    compareJobs(JobDataService.jobs()[1], jobs[1]);
+    expect(scope.jobData[0].job).toEqualJob(jobs[0]);
+    expect(scope.jobData[1].job).toEqualJob(jobs[1]);
+    expect(JobDataService.jobs()[0]).toEqualJob(jobs[0]);
+    expect(JobDataService.jobs()[1]).toEqualJob(jobs[1]);
 
-    compareJobApplications(scope.jobData[1].job_application, jobApplications[0]);
-    compareJobApplications(JobDataService.jobApplications()[0], jobApplications[0]);
+    expect(scope.jobData[1].job_application).toEqualJobApplication(jobApplications[0]);
+    expect(JobDataService.jobApplications()[0]).toEqualJobApplication(jobApplications[0]);
 
-    compareContacts(scope.jobData[1].contact, contacts[0]);
-    compareContacts(JobDataService.contacts()[0], contacts[0]);
+    expect(scope.jobData[1].contact).toEqualContact(contacts[0]);
+    expect(JobDataService.contacts()[0]).toEqualContact(contacts[0]);
   });
 
   it("should handle failure when retrieving all jobs", function() {
@@ -71,11 +96,11 @@ describe("JobApplicationsNewController", function() {
 
     expect(scope.jobData[0].job).toBe(undefined);
 
-    compareJobApplications(scope.jobData[0].job_application, jobApplications[0]);
-    compareJobApplications(JobDataService.jobApplications()[0], jobApplications[0]);
+    expect(scope.jobData[0].job_application).toEqualJobApplication(jobApplications[0]);
+    expect(JobDataService.jobApplications()[0]).toEqualJobApplication(jobApplications[0]);
 
-    compareContacts(scope.jobData[0].contact, contacts[0]);
-    compareContacts(JobDataService.contacts()[0], contacts[0]);
+    expect(scope.jobData[0].contact).toEqualContact(contacts[0]);
+    expect(JobDataService.contacts()[0]).toEqualContact(contacts[0]);
   });
 
   it("should handle failure when retrieving all job applications", function() {
@@ -87,16 +112,16 @@ describe("JobApplicationsNewController", function() {
       respond(contacts);
     $httpBackend.flush();
 
-    compareJobs(scope.jobData[0].job, jobs[0]);
-    compareJobs(scope.jobData[1].job, jobs[1]);
-    compareJobs(JobDataService.jobs()[0], jobs[0]);
-    compareJobs(JobDataService.jobs()[1], jobs[1]);
+    expect(scope.jobData[0].job).toEqualJob(jobs[0]);
+    expect(scope.jobData[1].job).toEqualJob(jobs[1]);
+    expect(JobDataService.jobs()[0]).toEqualJob(jobs[0]);
+    expect(JobDataService.jobs()[1]).toEqualJob(jobs[1]);
 
     expect(scope.jobData[0].job_application).toBe(undefined);
     expect(JobDataService.jobApplications().length).toBe(0);
 
-    compareContacts(scope.jobData[1].contact, contacts[0]);
-    compareContacts(JobDataService.contacts()[0], contacts[0]);
+    expect(scope.jobData[1].contact).toEqualContact(contacts[0]);
+    expect(JobDataService.contacts()[0]).toEqualContact(contacts[0]);
   });
 
   it("should handle failure when retrieving all contacts", function() {
@@ -108,13 +133,13 @@ describe("JobApplicationsNewController", function() {
       respond(400);
     $httpBackend.flush();
 
-    compareJobs(scope.jobData[0].job, jobs[0]);
-    compareJobs(scope.jobData[1].job, jobs[1]);
-    compareJobs(JobDataService.jobs()[0], jobs[0]);
-    compareJobs(JobDataService.jobs()[1], jobs[1]);
+    expect(scope.jobData[0].job).toEqualJob(jobs[0]);
+    expect(scope.jobData[1].job).toEqualJob(jobs[1]);
+    expect(JobDataService.jobs()[0]).toEqualJob(jobs[0]);
+    expect(JobDataService.jobs()[1]).toEqualJob(jobs[1]);
 
-    compareJobApplications(scope.jobData[1].job_application, jobApplications[0]);
-    compareJobApplications(JobDataService.jobApplications()[0], jobApplications[0]);
+    expect(scope.jobData[1].job_application).toEqualJobApplication(jobApplications[0]);
+    expect(JobDataService.jobApplications()[0]).toEqualJobApplication(jobApplications[0]);
     
     expect(scope.jobData[1].contact).toBe(undefined);
     expect(JobDataService.contacts().length).toBe(0);
@@ -143,11 +168,11 @@ describe("JobApplicationsNewController", function() {
     $httpBackend.flush();
     scope.$digest();
 
-    compareJobApplications(scope.jobData[0].job_application,    newApp);
-    compareJobApplications(JobDataService.jobApplications()[0], newApp);
+    expect(scope.jobData[0].job_application).toEqualJobApplication(   newApp);
+    expect(JobDataService.jobApplications()[0]).toEqualJobApplication(newApp);
 
-    compareContacts(scope.jobData[0].contact, newContact);
-    compareContacts(JobDataService.contacts()[0], newContact);
+    expect(scope.jobData[0].contact).toEqualContact(newContact);
+    expect(JobDataService.contacts()[0]).toEqualContact(newContact);
 
     expect(JobDataService.jobApplications().length).toBe(2);
     expect(JobDataService.contacts().length).toBe(2);
