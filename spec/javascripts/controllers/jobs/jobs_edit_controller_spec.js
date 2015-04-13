@@ -311,4 +311,55 @@ describe("JobsEditController", function() {
     expect(scope.jobData[1].contact).toEqualContact(    newContact);
     expect(JobDataService.contacts()[0]).toEqualContact(newContact);
   });
+
+  it("should edit a job without a contact", function() {
+    var job = jobs[1]; 
+    var editJob = { id:       job.id,  
+                    position: "Software Engineer", 
+                    company:  job.company, 
+                    link:     job.link };
+    var app = jobApplications[0];
+    var editApp = { id:            app.id,
+                    user_id:       app.user_id,
+                    job_id:        app.job_id,
+                    date_applied:   app.date_applied,
+                    comments:      "New Comments",
+                    communication: app.communication,
+                    status:        "Interviewing" };
+
+    $httpBackend.expectGET("/user/jobs").
+      respond(jobs);
+    $httpBackend.expectGET("/user/job_applications").
+      respond(jobApplications);
+    $httpBackend.expectGET("/user/contacts").
+      respond([]);
+    $httpBackend.flush();
+
+    expect(scope.jobData[1].job).toEqualJob(    jobs[1]);
+    expect(JobDataService.jobs()[1]).toEqualJob(jobs[1]);
+
+    expect(scope.jobData[1].job_application).toEqualJobApplication(jobApplications[0]);
+    expect(JobDataService.jobApplications()[0]).toEqualJobApplication(jobApplications[0]);
+
+    expect(scope.jobData[1].contact).toBe(undefined);
+    expect(JobDataService.contacts().length).toBe(0);
+
+    $httpBackend.expectPUT("/user/jobs/1", {job: editJob}).
+      respond(editJob);
+    $httpBackend.expectPUT("/user/jobs/1/job_applications/1", {job_application: editApp}).
+      respond(editApp);
+
+    scope.editJobAppContact(editJob, editApp, undefined);
+    $httpBackend.flush();
+    scope.$digest();
+
+    expect(scope.jobData[1].job).toEqualJob(     editJob);
+    expect(JobDataService.jobs()[1]).toEqualJob(editJob);
+
+    expect(scope.jobData[1].job_application).toEqualJobApplication(   editApp);
+    expect(JobDataService.jobApplications()[0]).toEqualJobApplication(editApp);
+
+    expect(scope.jobData[1].contact).toBe(undefined);
+    expect(JobDataService.contacts().length).toBe(0);
+  });
 });

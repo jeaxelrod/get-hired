@@ -32,7 +32,9 @@ app.controller("JobsEditController", ["$scope", "$stateParams", "JobsService", "
     $scope.editJobAppContact = function(job, app, contact) {
       var editedJob = { id: job.id, position: job.position, company: job.company, link: job.link }; 
       var editedApp = { id: app.id, user_id: app.user_id, job_id: app.job_id, date_applied: app.date_applied, comments: app.comments, communication: app.communication, status: app.status };
-      var editedContact = { id: contact.id, user_id: app.user_id, job_id: job.id, job_application_id: app.id, first_name: contact.first_name, last_name: contact.last_name, email: contact.email, phone_number: contact.phone_number };
+      if (contact) {
+        var editedContact = { id: contact.id, user_id: app.user_id, job_id: job.id, job_application_id: app.id, first_name: contact.first_name, last_name: contact.last_name, email: contact.email, phone_number: contact.phone_number };
+      }
 
       var jobsPromise = JobsService.editJob(editedJob).then(function(response) {
         JobDataService.updateJobs([response]);
@@ -44,12 +46,12 @@ app.controller("JobsEditController", ["$scope", "$stateParams", "JobsService", "
         updateJobData();
       });
 
-      if (editedContact.id) {
+      if (editedContact && editedContact.id) {
         var contactsPromise = ContactsService.editContact(editedContact).then(function(response) {
           JobDataService.updateContacts([response]);
           updateJobData();
         });
-      } else {
+      } else if (editedContact) {
         var contactsPromise = ContactsService.createContact(editedContact).
           then(function(response) {
             JobDataService.updateContacts([response]);

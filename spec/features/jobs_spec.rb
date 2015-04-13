@@ -178,6 +178,24 @@ RSpec.feature "Jobs", :type => :feature, js: true do
     expect(page).to have_content("Meow")
   end
 
+  scenario "Editing a Job, and Job Application without a Contact" do
+    app = FactoryGirl.create(:job_application)
+    job = app.job
+    user = job.user
+    new_position = "Cat Sitter"
+    login_as(user, :scope => :user)
+    
+    visit root_path
+    click_link "Jobs"
+    expect(page).to have_content(job.position)
+
+    click_button "Edit"
+    fill_in "Position", with: new_position
+    click_button "Edit Job"
+
+    expect(page).to have_content(new_position)
+  end
+
   scenario "Adding a contact to a job without a contact" do
     app = FactoryGirl.create(:job_application)
     job = app.job
