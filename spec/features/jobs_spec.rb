@@ -178,6 +178,22 @@ RSpec.feature "Jobs", :type => :feature, js: true do
     expect(page).to have_content("Meow")
   end
 
+  scenario "Adding a contact to a job without a contact" do
+    app = FactoryGirl.create(:job_application)
+    job = app.job
+    user = job.user
+    login_as(user, :scope => :user)
+
+    visit root_path
+    click_link "Jobs"
+    click_button "Edit"
+    fill_in "First Name", with: "First Name"
+    click_button "Edit Job"
+
+    expect(page).to have_content("First Name")
+    expect(user.contacts.length).to eq(1)
+  end
+
   scenario "Canceling an edit jobs request" do
     user = FactoryGirl.create(:user)
     job = FactoryGirl.create(:job, user: user)

@@ -28,6 +28,20 @@ RSpec.feature "Job Applications", :type => :feature, js: true do
     expect(page).to have_content new_contact[:first_name]
   end
 
+  scenario "Create new job application without a contact" do
+    user = FactoryGirl.create(:user)
+    job = FactoryGirl.create(:job, user: user)
+    login_as(user, :scope => :user)
+
+    visit root_path
+    click_link "Jobs"
+    click_button "Apply"
+    click_button "Create Application"
+
+    expect(user.job_applications.length).to eq(1)
+    expect(page).to have_content Date.today.strftime("%-m/%-d/%Y") 
+  end
+
   scenario "Canceling a request to create a new job applications" do
     user = FactoryGirl.create(:user)
     job = FactoryGirl.create(:job, user: user)
