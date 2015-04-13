@@ -118,6 +118,19 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
           controller: "NavController"
         }
       }
+    })
+    .state('contacts', {
+      url: "contacts",
+      views: {
+        "": {
+          templateUrl: "contacts/index.html",
+          controller:  "ContactsIndexController"
+        },
+        "nav": {
+          templateUrl: "nav/navbar.html",
+          controller:  "NavController"
+        }
+      }
     });
 
   $urlRouterProvider.otherwise('/');

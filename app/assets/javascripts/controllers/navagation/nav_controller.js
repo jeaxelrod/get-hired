@@ -9,8 +9,12 @@ app.controller('NavController', ['$scope', 'AuthService', '$state',
       if (isLoggedIn) {
         $scope.leftLinks = [
           { 
-            href: "jobs",
+            href:  "jobs",
             title: "Jobs"
+          },
+          {
+            href:  "contacts",
+            title: "Contacts"
           }
         ];
         $scope.rightLinks = [

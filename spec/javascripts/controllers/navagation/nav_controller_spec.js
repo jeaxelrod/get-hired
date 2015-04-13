@@ -20,7 +20,7 @@ describe("NavController", function() {
     $httpBackend.flush();
     AuthService.setCurrentUser({user: true});
     scope.$digest();
-    expect(scope.leftLinks).toEqual(  [{ href: "jobs",   title: "Jobs"    }]);
+    expect(scope.leftLinks).toEqual(  [{ href: "jobs",   title: "Jobs"    }, { href: 'contacts', title: 'Contacts' }]);
     expect(scope.rightLinks).toEqual( [{ href: "logout", title: "Log Out" }]);
   });
   it("should set correct links when not logged in", function() {
@@ -36,7 +36,7 @@ describe("NavController", function() {
     expect(scope.leftLinks).toEqual([]);
     AuthService.setCurrentUser({user: true});
     scope.$digest();
-    expect(scope.leftLinks).toEqual(  [{ href: "jobs",   title: "Jobs"    }]);
+    expect(scope.leftLinks).toEqual(  [{ href: "jobs",   title: "Jobs"    }, { href: 'contacts', title: 'Contacts' }]);
     expect(scope.rightLinks).toEqual( [{ href: "logout", title: "Log Out" }]);
   });
 
